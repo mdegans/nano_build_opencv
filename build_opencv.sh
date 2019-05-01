@@ -51,6 +51,7 @@ configure () {
     cd build
     cmake -D CMAKE_BUILD_TYPE=Release \
         -D BUILD_PERF_TESTS=OFF \
+        -D BUILD_TESTS=OFF \
         -D CUDA_FAST_MATH=1 \
         -D CUDA_ARCH_BIN="5.3" \
         -D CUDA_ARCH_PTX="" \
