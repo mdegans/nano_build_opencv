@@ -63,8 +63,12 @@ cleanup () {
 }
 
 
-if [[ $# -eq 1 ]] ; then
+if [[ $# -gt 0 ]] ; then
     VERSION=$1
+fi
+
+if [[ $# -gt 1 ]] && [[ $2 -eq "test" ]] ; then
+    DO_TEST=1
 fi
 
 setup
@@ -72,7 +76,12 @@ install_dependencies
 git_source $(VERSION)
 configure
 make -j$(JOBS)
-make test
+
+# ifdef DO_TEST
+if [[ ${DO_TEST} ]]; then
+    make test
+fi
+
 sudo make install
 cleanup
 
