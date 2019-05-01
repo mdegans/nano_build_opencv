@@ -59,7 +59,7 @@ configure () {
 
 cleanup () {
     while true; do
-        read -p "Do you wish to remove temporary build files in /tmp/build_opencv ?" yn
+        read -p "Do you wish to remove temporary build files in /tmp/build_opencv ? " yn
         case ${yn} in
             [Yy]* ) rm -rf /tmp/build_opencv ; break;;
             [Nn]* ) exit;;
