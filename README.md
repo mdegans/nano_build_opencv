@@ -37,3 +37,7 @@ run the tests by adding "test" as the second argument to the script.
 ```shell
 sh build_opencv.sh 4.0.0 test
 ```
+
+If OpenCV has already been built and you want to run the test suites, you can 
+navigate to `/tmp/build_opencv/opencv/build` and run `make test` to run the
+tests.
