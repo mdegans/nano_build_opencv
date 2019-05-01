@@ -69,6 +69,7 @@ configure () {
 }
 
 cleanup () {
+# https://stackoverflow.com/questions/226703/how-do-i-prompt-for-yes-no-cancel-input-in-a-linux-shell-script
     while true ; do
         read -p "Do you wish to remove temporary build files in /tmp/build_opencv ? " yn
         case ${yn} in
