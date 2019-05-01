@@ -14,9 +14,9 @@ sh build_opencv.sh $1 $2
 ```
 
 where:
-- __$1__ is an optional version number or tag of OpenCV you want to attempt to build
+- __$1__ optional argument: number or tag of OpenCV you want to attempt to build
   (__default 4.1.0__)
-- __$2__ if specified and if "test", runs the test suite (see notes below on that)
+- __$2__ optional argument: if "test", runs the test suite (see notes below on that)
 
 ## Specifying an OpenCV version (git branch)
 ```shell
