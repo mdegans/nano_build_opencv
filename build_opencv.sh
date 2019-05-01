@@ -62,6 +62,9 @@ cleanup () {
 }
 
 
+if [[ $# -eq 1 ]] ; then
+    VERSION=$1
+fi
 
 setup
 install_dependencies
