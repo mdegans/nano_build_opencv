@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-# 2019 Michael Crawford
+# 2019 Michael de Gans
 
 set -e
 
