@@ -32,7 +32,8 @@ swapfile via usb3 before doing so as otherwise you will swap from your microsd
 card and that will shorten it's lifespan artificially.
 
 If you've done that or are willing to stress your microsd card to test, you can
-run the tests by adding "test" as the second argument to the script.
+run the tests after the build automatically by adding "test" as the second 
+argument to the script.
 
 ```shell
 sh build_opencv.sh 4.0.0 test
