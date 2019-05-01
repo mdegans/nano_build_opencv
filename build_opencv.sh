@@ -3,8 +3,10 @@
 
 set -e
 
-VERSION=4.1.0
-JOBS=3
+# Constants (change these if you wish)
+
+VERSION=4.1.0  # controls the default version
+JOBS=3  # controls the number of jobs (make -j 3)
 
 setup () {
     cd /tmp
@@ -68,7 +70,7 @@ cleanup () {
     done
 }
 
-
+# parse arguments
 if [[ $# -gt 0 ]] ; then
     VERSION=$1
 fi
@@ -77,15 +79,18 @@ if [[ $# -gt 1 ]] && [[ $2 -eq "test" ]] ; then
     DO_TEST=1
 fi
 
+# prepare for the build:
 setup
 install_dependencies
 git_source ${VERSION}
 configure
+
+# start the build
 make -j${JOBS}
 
-# ifdef DO_TEST
+# ifdef DO_TEST ; then
 if [[ ${DO_TEST} ]]; then
-    make test
+    make test  # (make and) run the tests
 fi
 
 sudo make install
