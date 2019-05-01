@@ -4,7 +4,7 @@
 set -e
 
 # Constants (change these if you wish)
-
+PREFIX=/usr/local  # install prefix, (can be ~/.local for a user install)
 VERSION=4.1.0  # controls the default version
 JOBS=3  # controls the number of jobs (make -j 3)
 
@@ -52,7 +52,7 @@ configure () {
     cmake -D CMAKE_BUILD_TYPE=Release \
         -D BUILD_PERF_TESTS=OFF \
         -D BUILD_TESTS=OFF \
-        -D CUDA_FAST_MATH=1 \
+        -D CMAKE_INSTALL_PREFIX=${PREFIX} \
         -D CUDA_ARCH_BIN="5.3" \
         -D CUDA_ARCH_PTX="" \
         -D OPENCV_EXTRA_MODULES_PATH=/tmp/build_opencv/opencv_contrib/modules \
@@ -96,6 +96,12 @@ if [[ ${DO_TEST} ]]; then
     make test  # (make and) run the tests
 fi
 
-sudo make install
+# avoid a sudo make install (and root owned files in ~) if $PREFIX is writable
+if [[ ! -w ${PREFIX} ]] ; then
+    sudo make install
+else
+    make install
+fi
+
 cleanup
 
