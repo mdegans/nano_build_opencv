@@ -69,12 +69,12 @@ configure () {
 }
 
 cleanup () {
-    while true; do
+    while true ; do
         read -p "Do you wish to remove temporary build files in /tmp/build_opencv ? " yn
         case ${yn} in
             [Yy]* ) rm -rf /tmp/build_opencv ; break;;
-            [Nn]* ) exit;;
-            * ) echo "Please answer yes or no.";;
+            [Nn]* ) exit ;;
+            * ) echo "Please answer yes or no." ;;
         esac
     done
 }
