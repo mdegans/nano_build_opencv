@@ -43,18 +43,24 @@ install_dependencies () {
         libv4l-dev \
         pkg-config \
         python-dev \
-        python-numpy
+        python-numpy \
+        python3-dev \
+        python3-numpy
 }
 
 configure () {
     mkdir build
     cd build
     cmake -D CMAKE_BUILD_TYPE=Release \
+        -D BUILD_EXAMPLES=OFF \
+        -D BUILD_opencv_python2=ON \
+        -D BUILD_opencv_python3=ON \
         -D BUILD_PERF_TESTS=OFF \
         -D BUILD_TESTS=OFF \
         -D CMAKE_INSTALL_PREFIX=${PREFIX} \
         -D CUDA_ARCH_BIN="5.3" \
         -D CUDA_ARCH_PTX="" \
+        -D CUDA_FAST_MATH=1 \
         -D OPENCV_EXTRA_MODULES_PATH=/tmp/build_opencv/opencv_contrib/modules \
         -D WITH_CUDA=ON \
         -D WITH_GSTREAMER=ON \
