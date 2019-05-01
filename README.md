@@ -7,15 +7,21 @@ This script builds OpenCV from source on Jetson Nano.
 
 ## Usage:
 ```shell
-git clone nano_build_opencv
 sh build_opencv.sh
 ```
 
-## Specifying a git branch (version)
+## Specifying an OpenCV version (git branch)
 ```shell
-git clone https://github.com/mdegans/nano_build_opencv.git
-cd nano_build_opencv
 sh build_opencv.sh 4.0.0
+```
+
+## Specifying test
+Becuase the tests consume so much memory, it's recommended to mount an external 
+swapfile via usb3 before doing so as otherwise you will swap from your microsd 
+card and that will shorten it's lifespan artificially. Once that's done you can
+
+```shell
+sh build_opencv.sh 4.0.0 test
 ```
 
 Where `4.0.0` is any version of openCV from 2.2 to 4.1.0
