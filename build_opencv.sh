@@ -48,6 +48,7 @@ configure () {
     mkdir build
     cd build
     cmake -D CMAKE_BUILD_TYPE=Release \
+        -D BUILD_PERF_TESTS=OFF \
         -D CUDA_FAST_MATH=1 \
         -D OPENCV_EXTRA_MODULES_PATH=/tmp/build_opencv/opencv_contrib/modules \
         -D WITH_CUDA=ON \
