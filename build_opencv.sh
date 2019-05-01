@@ -98,7 +98,7 @@ configure
 make -j${JOBS}
 
 # ifdef DO_TEST ; then
-if [[ ${DO_TEST} ]]; then
+if [[ ${DO_TEST} ]] ; then
     make test  # (make and) run the tests
 fi
 
