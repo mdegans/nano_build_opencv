@@ -15,7 +15,7 @@ sh build_opencv.sh
 sh build_opencv.sh 4.0.0
 ```
 
-## Specifying test
+## Running Tests
 Becuase the tests consume so much memory, it's recommended to mount an external 
 swapfile via usb3 before doing so as otherwise you will swap from your microsd 
 card and that will shorten it's lifespan artificially. Once that's done you can
