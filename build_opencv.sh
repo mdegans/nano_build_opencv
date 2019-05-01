@@ -52,6 +52,8 @@ configure () {
     cmake -D CMAKE_BUILD_TYPE=Release \
         -D BUILD_PERF_TESTS=OFF \
         -D CUDA_FAST_MATH=1 \
+        -D CUDA_ARCH_BIN="5.3" \
+        -D CUDA_ARCH_PTX="" \
         -D OPENCV_EXTRA_MODULES_PATH=/tmp/build_opencv/opencv_contrib/modules \
         -D WITH_CUDA=ON \
         -D WITH_GSTREAMER=ON \
