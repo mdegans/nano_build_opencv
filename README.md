@@ -1,7 +1,7 @@
 # OpenCV build script for NVIDIA Jetson Nano
 
-This script is untested and expected it to break. Please report breakage [here]
-(https://github.com/mdegans/nano_build_opencv/issues).
+This script is untested and expected it to break. Please report breakage 
+[here](https://github.com/mdegans/nano_build_opencv/issues).
 
 This script builds OpenCV from source on Jetson Nano.
 
