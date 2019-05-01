@@ -73,9 +73,9 @@ fi
 
 setup
 install_dependencies
-git_source $(VERSION)
+git_source ${VERSION}
 configure
-make -j$(JOBS)
+make -j${JOBS}
 
 # ifdef DO_TEST
 if [[ ${DO_TEST} ]]; then
