@@ -93,6 +93,8 @@ configure () {
             -D BUILD_TESTS=OFF"
     fi
 
+    echo "cmake flags: ${CMAKEFLAGS}"
+
     cd opencv
     mkdir build
     cd build
