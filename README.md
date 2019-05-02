@@ -27,21 +27,3 @@ chmod +x build_opencv.sh
 
 Where `4.0.0` is any version of openCV from 2.2 to 4.1.0
 (any valid OpenCV git branch or tag will also work).
-
-## Running Tests
-Becuase the tests consume so much memory, it's recommended to mount an external 
-swapfile via usb3 before doing so. Otherwise you will swap from your micro-sd 
-card and that will shorten it's lifespan artificially.
-
-If you've done that or are willing to stress your microsd card to test, you can
-run the tests after the build automatically by adding "test" as the second 
-argument to the script.
-
-```shell
-chmod +x build_opencv.sh
-./build_opencv.sh 4.0.0 test
-```
-
-If OpenCV has already been built and you want to run the test suites, you can 
-navigate to `/tmp/build_opencv/opencv/build` and run `make test` to run the
-tests.

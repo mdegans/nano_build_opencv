@@ -75,24 +75,30 @@ install_dependencies () {
 }
 
 configure () {
+    local CMAKEFLAGS="
+        -D BUILD_EXAMPLES=OFF
+        -D BUILD_opencv_python2=ON
+        -D BUILD_opencv_python3=ON
+        -D CMAKE_INSTALL_PREFIX=${PREFIX}
+        -D CUDA_ARCH_BIN="5.3"
+        -D CUDA_ARCH_PTX=""
+        -D CUDA_FAST_MATH=1
+        -D OPENCV_EXTRA_MODULES_PATH=/tmp/build_opencv/opencv_contrib/modules
+        -D WITH_CUDA=ON
+        -D WITH_GSTREAMER=ON
+        -D WITH_LIBV4L=ON"
+
+    if ! [[ "$1" -eq "test" ]] ; then
+        CMAKEFLAGS="
+            ${CMAKEFLAGS}
+            -D BUILD_PERF_TESTS=OFF
+            -D BUILD_TESTS=OFF"
+    fi
+
     cd opencv
     mkdir build
     cd build
-    cmake -D CMAKE_BUILD_TYPE=Release \
-        -D BUILD_EXAMPLES=OFF \
-        -D BUILD_opencv_python2=ON \
-        -D BUILD_opencv_python3=ON \
-        -D BUILD_PERF_TESTS=OFF \
-        -D BUILD_TESTS=OFF \
-        -D CMAKE_INSTALL_PREFIX=${PREFIX} \
-        -D CUDA_ARCH_BIN="5.3" \
-        -D CUDA_ARCH_PTX="" \
-        -D CUDA_FAST_MATH=1 \
-        -D OPENCV_EXTRA_MODULES_PATH=/tmp/build_opencv/opencv_contrib/modules \
-        -D WITH_CUDA=ON \
-        -D WITH_GSTREAMER=ON \
-        -D WITH_LIBV4L=ON \
-        ..
+    cmake ${CMAKEFLAGS} ..
 }
 
 main () {
@@ -112,7 +118,12 @@ main () {
     setup
     install_dependencies
     git_source ${VER}
-    configure
+
+    if [[ ${DO_TEST} ]] ; then
+        configure test
+    else
+        configure
+    fi
 
     # start the build
     make -j${JOBS}
