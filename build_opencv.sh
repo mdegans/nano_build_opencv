@@ -122,10 +122,10 @@ main () {
     fi
 
     # avoid a sudo make install (and root owned files in ~) if $PREFIX is writable
-    if ! [[ -w ${PREFIX} ]] ; then
-        sudo make install
-    else
+    if [[ -w ${PREFIX} ]] ; then
         make install
+    else
+        sudo make install
     fi
 
     cleanup --test-warning
