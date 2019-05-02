@@ -12,8 +12,25 @@ readonly JOBS=1  # controls the number of jobs
 # as swap you can increase this and parts will build faster, while others might
 # build slower. This is currently untested
 
+cleanup () {
+# https://stackoverflow.com/questions/226703/how-do-i-prompt-for-yes-no-cancel-input-in-a-linux-shell-script
+    while true ; do
+        echo "Do you wish to remove temporary build files in /tmp/build_opencv ? "
+        read -p "(Doing so may make running tests on the build later impossible) " yn
+        case ${yn} in
+            [Yy]* ) rm -rf /tmp/build_opencv ; break;;
+            [Nn]* ) exit ;;
+            * ) echo "Please answer yes or no." ;;
+        esac
+    done
+}
+
 setup () {
     cd /tmp
+    if [[ -d "build_opencv" ]] ; then
+        echo "It appears an existing build exists in /tmp/build_opencv"
+        cleanup
+    fi
     mkdir build_opencv
     cd build_opencv
 }
@@ -72,19 +89,6 @@ configure () {
         -D WITH_GSTREAMER=ON \
         -D WITH_LIBV4L=ON \
         ..
-}
-
-cleanup () {
-# https://stackoverflow.com/questions/226703/how-do-i-prompt-for-yes-no-cancel-input-in-a-linux-shell-script
-    while true ; do
-        echo "Do you wish to remove temporary build files in /tmp/build_opencv ? "
-        read -p "(Doing so may make running tests on the build later impossible) " yn
-        case ${yn} in
-            [Yy]* ) rm -rf /tmp/build_opencv ; break;;
-            [Nn]* ) exit ;;
-            * ) echo "Please answer yes or no." ;;
-        esac
-    done
 }
 
 main () {
