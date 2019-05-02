@@ -83,35 +83,40 @@ cleanup () {
     done
 }
 
-# parse arguments
-if [[ $# -gt 0 ]] ; then
-    VERSION=$1
-fi
+main () {
 
-if [[ $# -gt 1 ]] && [[ $2 -eq "test" ]] ; then
-    DO_TEST=1
-fi
+    # parse arguments
+    if [[ $# -gt 0 ]] ; then
+        VERSION=$1
+    fi
 
-# prepare for the build:
-setup
-install_dependencies
-git_source ${VERSION}
-configure
+    if [[ $# -gt 1 ]] && [[ $2 -eq "test" ]] ; then
+        DO_TEST=1
+    fi
 
-# start the build
-make -j${JOBS}
+    # prepare for the build:
+    setup
+    install_dependencies
+    git_source ${VERSION}
+    configure
 
-# ifdef DO_TEST ; then
-if [[ ${DO_TEST} ]] ; then
-    make test  # (make and) run the tests
-fi
+    # start the build
+    make -j${JOBS}
 
-# avoid a sudo make install (and root owned files in ~) if $PREFIX is writable
-if [[ ! -w ${PREFIX} ]] ; then
-    sudo make install
-else
-    make install
-fi
+    # ifdef DO_TEST ; then
+    if [[ ${DO_TEST} ]] ; then
+        make test  # (make and) run the tests
+    fi
 
-cleanup
+    # avoid a sudo make install (and root owned files in ~) if $PREFIX is writable
+    if [[ ! -w ${PREFIX} ]] ; then
+        sudo make install
+    else
+        make install
+    fi
 
+    cleanup
+
+}
+
+main
