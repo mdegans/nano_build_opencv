@@ -3,9 +3,9 @@
 
 set -e
 
-# Constants (change these if you wish)
+# change default constants here:
 readonly PREFIX=/usr/local  # install prefix, (can be ~/.local for a user install)
-readonly VERSION=4.1.0  # controls the default version
+readonly DEFAULT_VERSION=4.1.0  # controls the default version (gets reset by the first argument)
 readonly JOBS=3  # controls the number of jobs (make -j 3)
 
 setup () {
@@ -85,9 +85,11 @@ cleanup () {
 
 main () {
 
+    local VER=${DEFAULT_VERSION}
+
     # parse arguments
     if [[ $# -gt 0 ]] ; then
-        VERSION=$1
+        VER=$1  # override the version
     fi
 
     if [[ $# -gt 1 ]] && [[ $2 -eq "test" ]] ; then
@@ -97,7 +99,7 @@ main () {
     # prepare for the build:
     setup
     install_dependencies
-    git_source ${VERSION}
+    git_source ${VER}
     configure
 
     # start the build
