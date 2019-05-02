@@ -119,4 +119,4 @@ main () {
 
 }
 
-main
+main $@
