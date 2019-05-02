@@ -122,7 +122,7 @@ main () {
     fi
 
     # avoid a sudo make install (and root owned files in ~) if $PREFIX is writable
-    if [[ ! -w ${PREFIX} ]] ; then
+    if ! [[ -w ${PREFIX} ]] ; then
         sudo make install
     else
         make install
