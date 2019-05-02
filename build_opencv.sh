@@ -15,9 +15,9 @@ setup () {
 }
 
 git_source () {
-    echo "Getting version $1 of opencv"
-    git clone --branch $1 https://github.com/opencv/opencv.git
-    git clone --branch $1 https://github.com/opencv/opencv_contrib.git
+    echo "Getting version '$1' of opencv"
+    git clone --branch "$1" https://github.com/opencv/opencv.git
+    git clone --branch "$1" https://github.com/opencv/opencv_contrib.git
 }
 
 install_dependencies () {
@@ -88,11 +88,11 @@ main () {
     local VER=${DEFAULT_VERSION}
 
     # parse arguments
-    if [[ $# -gt 0 ]] ; then
-        VER=$1  # override the version
+    if [[ "$#" -gt 0 ]] ; then
+        VER="$1"  # override the version
     fi
 
-    if [[ $# -gt 1 ]] && [[ $2 -eq "test" ]] ; then
+    if [[ "$#" -gt 1 ]] && [[ "$2" -eq "test" ]] ; then
         DO_TEST=1
     fi
 
