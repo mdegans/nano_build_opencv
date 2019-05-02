@@ -30,6 +30,7 @@ install_dependencies () {
         cmake \
         git \
         libavcodec-dev \
+        libavresample-dev \
         libavformat-dev \
         libdc1394-22-dev \
         libgstreamer1.0-dev \
