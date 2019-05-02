@@ -10,7 +10,8 @@ Related thread on Nvidia developer forum
 
 ## Usage:
 ```shell
-sh build_opencv.sh $1 $2
+chmod +x build_opencv.sh
+./build_opencv.sh $1 $2
 ```
 
 where:
@@ -20,7 +21,8 @@ where:
 
 ## Specifying an OpenCV version (git branch)
 ```shell
-sh build_opencv.sh 4.0.0
+chmod +x build_opencv.sh
+./build_opencv.sh 4.0.0
 ```
 
 Where `4.0.0` is any version of openCV from 2.2 to 4.1.0
@@ -36,7 +38,8 @@ run the tests after the build automatically by adding "test" as the second
 argument to the script.
 
 ```shell
-sh build_opencv.sh 4.0.0 test
+chmod +x build_opencv.sh
+./build_opencv.sh 4.0.0 test
 ```
 
 If OpenCV has already been built and you want to run the test suites, you can 
