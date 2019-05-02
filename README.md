@@ -30,7 +30,7 @@ Where `4.0.0` is any version of openCV from 2.2 to 4.1.0
 
 ## Running Tests
 Becuase the tests consume so much memory, it's recommended to mount an external 
-swapfile via usb3 before doing so as otherwise you will swap from your microsd 
+swapfile via usb3 before doing so. Otherwise you will swap from your micro-sd 
 card and that will shorten it's lifespan artificially.
 
 If you've done that or are willing to stress your microsd card to test, you can
