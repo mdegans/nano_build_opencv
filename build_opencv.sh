@@ -4,9 +4,9 @@
 set -e
 
 # Constants (change these if you wish)
-PREFIX=/usr/local  # install prefix, (can be ~/.local for a user install)
-VERSION=4.1.0  # controls the default version
-JOBS=3  # controls the number of jobs (make -j 3)
+readonly PREFIX=/usr/local  # install prefix, (can be ~/.local for a user install)
+readonly VERSION=4.1.0  # controls the default version
+readonly JOBS=3  # controls the number of jobs (make -j 3)
 
 setup () {
     cd /tmp
