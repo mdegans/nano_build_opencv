@@ -17,7 +17,7 @@ cleanup () {
     while true ; do
         echo "Do you wish to remove temporary build files in /tmp/build_opencv ? "
         if ! [[ "$1" -eq "--test-warning" ]] ; then
-            "(Doing so may make running tests on the build later impossible)"
+            echo "(Doing so may make running tests on the build later impossible)"
         fi
         read -p "Y/N " yn
         case ${yn} in
@@ -80,8 +80,6 @@ configure () {
         -D BUILD_opencv_python2=ON
         -D BUILD_opencv_python3=ON
         -D CMAKE_INSTALL_PREFIX=${PREFIX}
-        -D CUDA_ARCH_BIN="5.3"
-        -D CUDA_ARCH_PTX=""
         -D CUDA_FAST_MATH=1
         -D OPENCV_EXTRA_MODULES_PATH=/tmp/build_opencv/opencv_contrib/modules
         -D WITH_CUDA=ON
