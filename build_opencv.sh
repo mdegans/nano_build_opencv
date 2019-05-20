@@ -68,8 +68,6 @@ install_dependencies () {
         libtiff-dev \
         libv4l-dev \
         pkg-config \
-        python-dev \
-        python-numpy \
         python3-dev \
         python3-numpy
 }
@@ -77,7 +75,6 @@ install_dependencies () {
 configure () {
     local CMAKEFLAGS="
         -D BUILD_EXAMPLES=OFF
-        -D BUILD_opencv_python2=ON
         -D BUILD_opencv_python3=ON
         -D CMAKE_INSTALL_PREFIX=${PREFIX}
         -D OPENCV_EXTRA_MODULES_PATH=/tmp/build_opencv/opencv_contrib/modules
