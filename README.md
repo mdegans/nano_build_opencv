@@ -10,7 +10,6 @@ Related thread on Nvidia developer forum
 
 ## Usage:
 ```shell
-chmod +x build_opencv.sh
 ./build_opencv.sh $1 $2
 ```
 
@@ -21,7 +20,6 @@ where:
 
 ## Specifying an OpenCV version (git branch)
 ```shell
-chmod +x build_opencv.sh
 ./build_opencv.sh 4.0.0
 ```
 
