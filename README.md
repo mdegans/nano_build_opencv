@@ -20,4 +20,4 @@ where:
 ```
 
 Where `4.0.0` is any version of openCV from 2.2 to 4.1.0
-(any valid OpenCV git branch or tag will also work).
+(any valid OpenCV git branch or tag will also attempt to work, however the very old versions are have not been tested to build and may require spript modifications.).
