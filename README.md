@@ -7,12 +7,8 @@ Related thread on Nvidia developer forum
 
 ## Usage:
 ```shell
-./build_opencv.sh $1
+./build_opencv.sh
 ```
-
-where:
-- __$1__ optional argument: number or tag of OpenCV you want to attempt to build
-  (__default 4.1.0__)
 
 ## Specifying an OpenCV version (git branch)
 ```shell
