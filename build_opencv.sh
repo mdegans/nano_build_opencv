@@ -82,7 +82,7 @@ configure () {
         -D CMAKE_INSTALL_PREFIX=${PREFIX}
         -D OPENCV_EXTRA_MODULES_PATH=/tmp/build_opencv/opencv_contrib/modules
         -D WITH_CUDA=ON
-        -D CUDA_ARCH_BIN="5.3"
+        -D CUDA_ARCH_BIN="5.3,6.2,7.2"
         -D CUDA_ARCH_PTX=""
         -D WITH_GSTREAMER=ON
         -D WITH_LIBV4L=ON"
