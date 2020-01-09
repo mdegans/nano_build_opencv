@@ -59,7 +59,7 @@ install_dependencies () {
         libavformat-dev \
         libdc1394-22-dev \
         libgstreamer1.0-dev \
-        libgtk2.0-dev \
+        libgtk-3-dev \
         libjpeg-dev \
         libpng-dev \
         libswscale-dev \
