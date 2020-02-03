@@ -80,10 +80,11 @@ configure () {
         -D BUILD_opencv_python2=ON
         -D BUILD_opencv_python3=ON
         -D CMAKE_INSTALL_PREFIX=${PREFIX}
-        -D OPENCV_EXTRA_MODULES_PATH=/tmp/build_opencv/opencv_contrib/modules
-        -D WITH_CUDA=ON
         -D CUDA_ARCH_BIN="5.3,6.2,7.2"
         -D CUDA_ARCH_PTX=""
+        -D OPENCV_EXTRA_MODULES_PATH=/tmp/build_opencv/opencv_contrib/modules
+        -D OPENCV_GENERATE_PKGCONFIG=ON
+        -D WITH_CUDA=ON
         -D WITH_GSTREAMER=ON
         -D WITH_LIBV4L=ON"
 
