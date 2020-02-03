@@ -73,6 +73,7 @@ install_dependencies () {
         libswscale-dev \
         libtbb-dev \
         libtbb2 \
+        libtesseract-dev \
         libtiff-dev \
         libv4l-dev \
         pkg-config \
