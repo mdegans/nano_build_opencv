@@ -68,7 +68,6 @@ install_dependencies () {
         libswscale-dev \
         libtbb-dev \
         libtbb2 \
-        libtesseract-dev \
         libtiff-dev \
         libv4l-dev \
         pkg-config \
@@ -92,11 +91,11 @@ configure () {
         -D WITH_GSTREAMER=ON
         -D WITH_LIBV4L=ON"
 
-    if [[ "$2" != "test" ]] ; then
+    if ! [[ "$1" -eq "test" ]] ; then
         CMAKEFLAGS="
-            ${CMAKEFLAGS}
-            -D BUILD_PERF_TESTS=OFF
-            -D BUILD_TESTS=OFF"
+        ${CMAKEFLAGS}
+        -D BUILD_PERF_TESTS=OFF
+        -D BUILD_TESTS=OFF"
     fi
 
     echo "cmake flags: ${CMAKEFLAGS}"
@@ -104,7 +103,7 @@ configure () {
     cd opencv
     mkdir build
     cd build
-    cmake "${CMAKEFLAGS}" ..
+    cmake ${CMAKEFLAGS} ..
 }
 
 main () {
@@ -116,21 +115,25 @@ main () {
         VER="$1"  # override the version
     fi
 
-    DO_TEST=false
-    if [[ $# -gt 1 ]] && [[ "$2" == "test" ]] ; then
-        DO_TEST=true
+    if [[ "$#" -gt 1 ]] && [[ "$2" -eq "test" ]] ; then
+        DO_TEST=1
     fi
 
     # prepare for the build:
     setup
     install_dependencies
-    git_source "${VER}"
-    configure "${DO_TEST}"
+    git_source ${VER}
+
+    if [[ ${DO_TEST} ]] ; then
+        configure test
+    else
+        configure
+    fi
 
     # start the build
     make -j${JOBS}
 
-    if [[ "${DO_TEST}" == "true" ]] ; then
+    if [[ ${DO_TEST} ]] ; then
         make test  # (make and) run the tests
     fi
 
