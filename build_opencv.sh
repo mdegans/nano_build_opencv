@@ -94,7 +94,8 @@ configure () {
         -D OPENCV_GENERATE_PKGCONFIG=ON
         -D WITH_CUDA=ON
         -D WITH_GSTREAMER=ON
-        -D WITH_LIBV4L=ON"
+        -D WITH_LIBV4L=ON
+        -D WITH_NONFREE=ON"
 
     if ! [[ "$1" -eq "test" ]] ; then
         CMAKEFLAGS="
