@@ -55,9 +55,12 @@ install_dependencies () {
         cmake \
         git \
         libavcodec-dev \
-        libavresample-dev \
         libavformat-dev \
+        libavresample-dev \
         libdc1394-22-dev \
+        libgstreamer-plugins-bad1.0-dev \
+        libgstreamer-plugins-base1.0-dev \
+        libgstreamer-plugins-good1.0-dev \
         libgstreamer1.0-dev \
         libgtk-3-dev \
         libjpeg-dev \
