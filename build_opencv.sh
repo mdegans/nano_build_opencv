@@ -5,7 +5,7 @@ set -e
 
 # change default constants here:
 readonly PREFIX=/usr/local  # install prefix, (can be ~/.local for a user install)
-readonly DEFAULT_VERSION=4.1.0  # controls the default version (gets reset by the first argument)
+readonly DEFAULT_VERSION=4.2.0  # controls the default version (gets reset by the first argument)
 readonly JOBS=1  # controls the number of jobs
 # (recommend leaving JOBS to 1 since each  `cc1plus` process towards the end of
 # the build consumes close to 1.7G memory) If you have an external drive connected
