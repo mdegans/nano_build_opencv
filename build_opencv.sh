@@ -6,11 +6,16 @@ set -e
 # change default constants here:
 readonly PREFIX=/usr/local  # install prefix, (can be ~/.local for a user install)
 readonly DEFAULT_VERSION=4.2.0  # controls the default version (gets reset by the first argument)
-readonly JOBS=1  # controls the number of jobs
-# (recommend leaving JOBS to 1 since each  `cc1plus` process towards the end of
-# the build consumes close to 1.7G memory) If you have an external drive connected
-# as swap you can increase this and parts will build faster, while others might
-# build slower. This is currently untested
+readonly CPUS=$(nproc)  # controls the number of jobs
+
+# better board detection. if it has 6 or more cpus, it probably has a ton of ram too
+if [[ $CPUS -gt 5 ]]; then
+    # something with a ton of ram
+    JOBS=$CPUS
+else
+    JOBS=1  # you can set this to 4 if you have a swap file
+    # otherwise a Nano will choke towards the end of the build
+fi
 
 cleanup () {
 # https://stackoverflow.com/questions/226703/how-do-i-prompt-for-yes-no-cancel-input-in-a-linux-shell-script
