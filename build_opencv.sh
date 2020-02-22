@@ -58,8 +58,10 @@ install_dependencies () {
     sudo apt-get install -y \
         build-essential \
         cmake \
-        git \
         curl \
+        git \
+        gfortran \
+        libatlas-base-dev \
         libavcodec-dev \
         libavformat-dev \
         libavresample-dev \
@@ -70,6 +72,11 @@ install_dependencies () {
         libgstreamer1.0-dev \
         libgtk-3-dev \
         libjpeg-dev \
+        libjpeg8-dev \
+        libjpeg-turbo8-dev \
+        liblapack-dev \
+        liblapacke-dev \
+        libopenblas-dev \
         libpng-dev \
         libswscale-dev \
         libtbb-dev \
@@ -77,14 +84,18 @@ install_dependencies () {
         libtesseract-dev \
         libtiff-dev \
         libv4l-dev \
-        v4l-utils \
-        qv4l2 \
-        v4l2ucp \
+        libxvidcore-dev \
+        libx264-dev \
         pkg-config \
         python-dev \
         python-numpy \
         python3-dev \
-        python3-numpy
+        python3-numpy \
+        python3-matplotlib
+        qv4l2 \
+        qt5-default \
+        v4l-utils \
+        v4l2ucp \
 }
 
 configure () {
@@ -93,17 +104,21 @@ configure () {
         -D BUILD_opencv_python2=ON
         -D BUILD_opencv_python3=ON
         -D CMAKE_INSTALL_PREFIX=${PREFIX}
+        -D CMAKE_BUILD_TYPE=RELEASE"
         -D CUDA_ARCH_BIN=5.3,6.2,7.2
         -D CUDA_ARCH_PTX=
-        -D OPENCV_ENABLE_NONFREE=ON
-        -D ENABLE_FAST_MATH=ON 
         -D CUDA_FAST_MATH=ON
+        -D ENABLE_FAST_MATH=ON 
+        -D OPENCV_ENABLE_NONFREE=ON
         -D OPENCV_EXTRA_MODULES_PATH=/tmp/build_opencv/opencv_contrib/modules
         -D OPENCV_GENERATE_PKGCONFIG=ON
         -D WITH_CUDA=ON
+        -D WITH_CUBLAS=ON
         -D WITH_GSTREAMER=ON
         -D WITH_LIBV4L=ON
-        -D CMAKE_BUILD_TYPE=RELEASE"
+        -D WITH_OPENGL=ON
+        -D WITH_QT=ON"
+        
 
     if ! [[ "$1" -eq "test" ]] ; then
         CMAKEFLAGS="
