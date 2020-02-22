@@ -66,6 +66,8 @@ install_dependencies () {
         libavformat-dev \
         libavresample-dev \
         libdc1394-22-dev \
+        libeigen3-dev \
+        libglew-dev \
         libgstreamer-plugins-bad1.0-dev \
         libgstreamer-plugins-base1.0-dev \
         libgstreamer-plugins-good1.0-dev \
@@ -109,6 +111,7 @@ configure () {
         -D CUDA_ARCH_PTX=
         -D CUDA_FAST_MATH=ON
         -D ENABLE_FAST_MATH=ON 
+        -D ENABLE_NEON=ON
         -D OPENCV_ENABLE_NONFREE=ON
         -D OPENCV_EXTRA_MODULES_PATH=/tmp/build_opencv/opencv_contrib/modules
         -D OPENCV_GENERATE_PKGCONFIG=ON
@@ -118,7 +121,6 @@ configure () {
         -D WITH_LIBV4L=ON
         -D WITH_OPENGL=ON
         -D WITH_QT=ON"
-        
 
     if ! [[ "$1" -eq "test" ]] ; then
         CMAKEFLAGS="
