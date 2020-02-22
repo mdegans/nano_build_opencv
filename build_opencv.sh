@@ -59,6 +59,7 @@ install_dependencies () {
         build-essential \
         cmake \
         git \
+        curl \
         libavcodec-dev \
         libavformat-dev \
         libavresample-dev \
@@ -76,6 +77,9 @@ install_dependencies () {
         libtesseract-dev \
         libtiff-dev \
         libv4l-dev \
+        v4l-utils \
+        qv4l2 \
+        v4l2ucp \
         pkg-config \
         python-dev \
         python-numpy \
@@ -92,11 +96,14 @@ configure () {
         -D CUDA_ARCH_BIN=5.3,6.2,7.2
         -D CUDA_ARCH_PTX=
         -D OPENCV_ENABLE_NONFREE=ON
+        -D ENABLE_FAST_MATH=ON 
+        -D CUDA_FAST_MATH=ON
         -D OPENCV_EXTRA_MODULES_PATH=/tmp/build_opencv/opencv_contrib/modules
         -D OPENCV_GENERATE_PKGCONFIG=ON
         -D WITH_CUDA=ON
         -D WITH_GSTREAMER=ON
-        -D WITH_LIBV4L=ON"
+        -D WITH_LIBV4L=ON
+        -D CMAKE_BUILD_TYPE=RELEASE"
 
     if ! [[ "$1" -eq "test" ]] ; then
         CMAKEFLAGS="
@@ -127,6 +134,8 @@ main () {
     fi
 
     # prepare for the build:
+    sudo nvpmodel -m 0
+    sudo jetson_clocks
     setup
     install_dependencies
     git_source ${VER}
