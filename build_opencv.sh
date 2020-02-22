@@ -106,7 +106,7 @@ configure () {
         -D BUILD_opencv_python2=ON
         -D BUILD_opencv_python3=ON
         -D CMAKE_INSTALL_PREFIX=${PREFIX}
-        -D CMAKE_BUILD_TYPE=RELEASE"
+        -D CMAKE_BUILD_TYPE=RELEASE
         -D CUDA_ARCH_BIN=5.3,6.2,7.2
         -D CUDA_ARCH_PTX=
         -D CUDA_FAST_MATH=ON
