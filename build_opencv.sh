@@ -93,11 +93,11 @@ install_dependencies () {
         python-numpy \
         python3-dev \
         python3-numpy \
-        python3-matplotlib
+        python3-matplotlib \
         qv4l2 \
         qt5-default \
         v4l-utils \
-        v4l2ucp \
+        v4l2ucp
 }
 
 configure () {
