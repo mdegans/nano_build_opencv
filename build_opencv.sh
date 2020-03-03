@@ -100,7 +100,7 @@ install_dependencies () {
         qt5-default \
         v4l-utils \
         v4l2ucp \
-        zlib
+        zlib1g-dev
 }
 
 configure () {
