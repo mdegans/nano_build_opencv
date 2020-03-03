@@ -112,8 +112,7 @@ configure () {
         -D CUDA_ARCH_BIN=5.3,6.2,7.2
         -D CUDA_ARCH_PTX=
         -D CUDA_FAST_MATH=ON
-        -D EIGEN_INCLUDE_PATH=/usr/include/eigen3
-        -D ENABLE_FAST_MATH=ON 
+        -D EIGEN_INCLUDE_PATH=/usr/include/eigen3 
         -D ENABLE_NEON=ON
         -D OPENCV_ENABLE_NONFREE=ON
         -D OPENCV_EXTRA_MODULES_PATH=/tmp/build_opencv/opencv_contrib/modules
