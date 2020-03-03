@@ -58,7 +58,6 @@ install_dependencies () {
     sudo apt-get install -y \
         build-essential \
         cmake \
-        curl \
         git \
         gfortran \
         libatlas-base-dev \
@@ -152,8 +151,6 @@ main () {
     fi
 
     # prepare for the build:
-    sudo nvpmodel -m 0
-    sudo jetson_clocks
     setup
     install_dependencies
     git_source ${VER}
