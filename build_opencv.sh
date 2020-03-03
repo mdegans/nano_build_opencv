@@ -97,7 +97,6 @@ install_dependencies () {
         python3-numpy \
         python3-matplotlib \
         qv4l2 \
-        qt5-default \
         v4l-utils \
         v4l2ucp \
         zlib1g-dev
