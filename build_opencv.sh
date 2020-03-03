@@ -121,8 +121,7 @@ configure () {
         -D WITH_CUBLAS=ON
         -D WITH_GSTREAMER=ON
         -D WITH_LIBV4L=ON
-        -D WITH_OPENGL=ON
-        -D WITH_QT=ON"
+        -D WITH_OPENGL=ON"
 
     if ! [[ "$1" -eq "test" ]] ; then
         CMAKEFLAGS="
