@@ -64,6 +64,7 @@ install_dependencies () {
         libavcodec-dev \
         libavformat-dev \
         libavresample-dev \
+        libcanberra-gtk3-module \
         libdc1394-22-dev \
         libeigen3-dev \
         libglew-dev \
@@ -79,12 +80,14 @@ install_dependencies () {
         liblapacke-dev \
         libopenblas-dev \
         libpng-dev \
+        libpostproc-dev \
         libswscale-dev \
         libtbb-dev \
         libtbb2 \
         libtesseract-dev \
         libtiff-dev \
         libv4l-dev \
+        libxine2-dev \
         libxvidcore-dev \
         libx264-dev \
         pkg-config \
@@ -96,7 +99,8 @@ install_dependencies () {
         qv4l2 \
         qt5-default \
         v4l-utils \
-        v4l2ucp
+        v4l2ucp \
+        zlib
 }
 
 configure () {
