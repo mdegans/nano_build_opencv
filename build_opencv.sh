@@ -68,7 +68,6 @@ install_dependencies () {
         libdc1394-22-dev \
         libeigen3-dev \
         libglew-dev \
-        libgstreamer-plugins-bad1.0-dev \
         libgstreamer-plugins-base1.0-dev \
         libgstreamer-plugins-good1.0-dev \
         libgstreamer1.0-dev \
