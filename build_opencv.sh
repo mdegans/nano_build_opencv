@@ -134,7 +134,7 @@ configure () {
     cd opencv
     mkdir build
     cd build
-    cmake ${CMAKEFLAGS} ..
+    cmake ${CMAKEFLAGS} .. 2>&1 | tee -a configure.log
 }
 
 main () {
@@ -162,17 +162,17 @@ main () {
     fi
 
     # start the build
-    make -j${JOBS}
+    make -j${JOBS} 2>&1 | tee -a build.log
 
     if [[ ${DO_TEST} ]] ; then
-        make test  # (make and) run the tests
+        make test 2>&1 | tee -a test.log
     fi
 
     # avoid a sudo make install (and root owned files in ~) if $PREFIX is writable
     if [[ -w ${PREFIX} ]] ; then
-        make install
+        make install 2>&1 | tee -a install.log
     else
-        sudo make install
+        sudo make install 2>&1 | tee -a install.log
     fi
 
     cleanup --test-warning
