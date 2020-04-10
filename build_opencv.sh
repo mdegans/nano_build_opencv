@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # 2019 Michael de Gans
 
-set -e
+set -ex
 
 # change default constants here:
 readonly PREFIX=/usr/local  # install prefix, (can be ~/.local for a user install)
