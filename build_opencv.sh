@@ -53,6 +53,7 @@ install_dependencies () {
     # open-cv has a lot of dependencies, but most can be found in the default
     # package repository or should already be installed (eg. CUDA).
     echo "Installing build dependencies."
+    apt-get update && apt-get install -y --no-install-recommends \
         gosu \
         build-essential \
         cmake \
