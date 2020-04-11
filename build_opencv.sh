@@ -33,6 +33,8 @@ cleanup () {
 }
 
 setup () {
+    echo "CREATING new builder user to build opencv"
+    adduser --system --group --no-create-home builder
     if [[ -d ${BUILD_TMP} ]] ; then
         echo "WARNING: It appears an existing build exists in /tmp/build_opencv"
         cleanup
