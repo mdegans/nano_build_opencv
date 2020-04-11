@@ -6,7 +6,7 @@ FROM nvcr.io/nvidia/l4t-base:r32.3.1
 ARG OPENCV_VERSION="4.2.0"
 ARG OPENCV_DO_TEST="FALSE"
 # note: 8 jobs will fail on Nano. Try 1 instead.
-ARG OPENCV_BUILD_JOBS="8"
+ARG OPENCV_BUILD_JOBS="1"
 
 ### environment variables ###
 # required for apt-get -y to work properly:
