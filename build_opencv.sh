@@ -89,10 +89,9 @@ install_dependencies () {
         libxvidcore-dev \
         libx264-dev \
         pkg-config \
-        python-dev \
-        python-numpy \
         python3-dev \
         python3-numpy \
+		python3-pil \
         python3-matplotlib \
         qv4l2 \
         v4l-utils \
