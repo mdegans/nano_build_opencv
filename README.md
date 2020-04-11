@@ -8,12 +8,14 @@ Related thread on Nvidia developer forum
 ## Usage:
 ```shell
 (clone repo)
+git checkout docker
 (sudo) docker build -t tegra_opencv:latest nano_build_opencv
 ```
 
 ## Specifying an OpenCV version (git branch):
 ```shell
 (clone repo)
+git checkout docker
 (sudo) docker build --build-arg OPENCV_VERSION="4.1.0" -t tegra_opencv:4.1.0 nano_build_opencv
 ```
 
