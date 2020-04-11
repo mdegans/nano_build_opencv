@@ -5,48 +5,36 @@ set -ex
 
 # change default constants here:
 readonly PREFIX=/usr/local  # install prefix, (can be ~/.local for a user install)
-readonly DEFAULT_VERSION=4.2.0  # controls the default version (gets reset by the first argument)
-readonly CPUS=$(nproc)  # controls the number of jobs
+readonly BUILD_TMP=/tmp/build_opencv
 
 cleanup () {
-# https://stackoverflow.com/questions/226703/how-do-i-prompt-for-yes-no-cancel-input-in-a-linux-shell-script
-    while true ; do
-        echo "Do you wish to remove temporary build files in /tmp/build_opencv ? "
-        if ! [[ "$1" -eq "--test-warning" ]] ; then
-            echo "(Doing so may make running tests on the build later impossible)"
-        fi
-        read -p "Y/N " yn
-        case ${yn} in
-            [Yy]* ) rm -rf /tmp/build_opencv ; break;;
-            [Nn]* ) exit ;;
-            * ) echo "Please answer yes or no." ;;
-        esac
-    done
+	echo "REMOVING build files"
+    rm -rf ${BUILD_TMP}
+
+	echo "REMOVING builder user and any owned files"
+	deluser --remove-all-files builder
 }
 
 setup () {
-    cd /tmp
-    if [[ -d "build_opencv" ]] ; then
-        echo "It appears an existing build exists in /tmp/build_opencv"
+    if [[ -d ${BUILD_TMP} ]] ; then
+        echo "WARNING: It appears an existing build exists in /tmp/build_opencv"
         cleanup
     fi
-    mkdir build_opencv
-    cd build_opencv
+    mkdir -p ${BUILD_TMP} && chown builder:builder ${BUILD_TMP}
 }
 
 git_source () {
-    echo "Getting version '$1' of OpenCV"
-    git clone --branch "$1" https://github.com/opencv/opencv.git
-    git clone --branch "$1" https://github.com/opencv/opencv_contrib.git
+	cd ${BUILD_TMP}
+    echo "CLONING version '$1' of OpenCV"
+    gosu builder git clone --branch "$1" https://github.com/opencv/opencv.git
+    gosu builder git clone --branch "$1" https://github.com/opencv/opencv_contrib.git
 }
 
 install_dependencies () {
     # open-cv has a lot of dependencies, but most can be found in the default
     # package repository or should already be installed (eg. CUDA).
     echo "Installing build dependencies."
-    sudo apt-get update
-    sudo apt-get dist-upgrade -y --autoremove
-    sudo apt-get install -y \
+        gosu \
         build-essential \
         cmake \
         git \
@@ -124,9 +112,9 @@ configure () {
     echo "cmake flags: ${CMAKEFLAGS}"
 
     cd opencv
-    mkdir build
+    mkdir build && chown builder:builder build
     cd build
-    cmake ${CMAKEFLAGS} ..
+    gosu builder cmake ${CMAKEFLAGS} ..
 }
 
 main () {
@@ -150,6 +138,7 @@ main () {
     gosu builder make -j${OPENCV_BUILD_JOBS}
 
     if [[ ${OPENCV_DO_TEST} == "TRUE" ]] ; then
+        gosu builder make test  # (make and) run the tests
     fi
 
     # avoid a sudo make install (and root owned files in ~) if $PREFIX is writable
