@@ -160,14 +160,7 @@ main () {
         gosu builder make test  # (make and) run the tests
     fi
 
-    # avoid a sudo make install (and root owned files in ~) if $PREFIX is writable
-    if [[ -w ${PREFIX} ]] ; then
-        make install
-    else
-        sudo make install
-    fi
-
-    cleanup --test-warning
+    make install
 
     cleanup
 }
