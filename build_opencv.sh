@@ -103,6 +103,7 @@ install_dependencies () {
 
 configure () {
     local CMAKEFLAGS="
+        -D CMAKE_LIBRARY_PATH=/usr/local/cuda/lib64/stubs
         -D BUILD_EXAMPLES=OFF
         -D BUILD_opencv_python2=ON
         -D BUILD_opencv_python3=ON
