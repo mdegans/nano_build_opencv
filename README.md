@@ -16,7 +16,7 @@ Related thread on Nvidia developer forum
 ## Specifying an OpenCV version (git branch):
 ```shell
 (clone repo)
-(sudo) docker build -t --build-arg OPENCV_VERSION="4.1.0" tegra_opencv:4.1.0 nano_build_opencv
+(sudo) docker build --build-arg OPENCV_VERSION="4.1.0" -t tegra_opencv:4.1.0 nano_build_opencv
 ```
 
 Where `4.2.0` is any version of openCV from 2.2 to 4.2.0
