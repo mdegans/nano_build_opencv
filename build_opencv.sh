@@ -169,6 +169,7 @@ main () {
 
     cleanup --test-warning
 
+    cleanup
 }
 
 main "$@"
