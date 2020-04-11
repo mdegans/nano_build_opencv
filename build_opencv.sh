@@ -157,6 +157,7 @@ main () {
     gosu builder make -j${OPENCV_BUILD_JOBS}
 
     if [[ ${OPENCV_DO_TEST} == "TRUE" ]] ; then
+		echo "MAKING tests"
         gosu builder make test  # (make and) run the tests
     fi
 
