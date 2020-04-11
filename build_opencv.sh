@@ -8,15 +8,6 @@ readonly PREFIX=/usr/local  # install prefix, (can be ~/.local for a user instal
 readonly DEFAULT_VERSION=4.2.0  # controls the default version (gets reset by the first argument)
 readonly CPUS=$(nproc)  # controls the number of jobs
 
-# better board detection. if it has 6 or more cpus, it probably has a ton of ram too
-if [[ $CPUS -gt 5 ]]; then
-    # something with a ton of ram
-    JOBS=$CPUS
-else
-    JOBS=1  # you can set this to 4 if you have a swap file
-    # otherwise a Nano will choke towards the end of the build
-fi
-
 cleanup () {
 # https://stackoverflow.com/questions/226703/how-do-i-prompt-for-yes-no-cancel-input-in-a-linux-shell-script
     while true ; do
@@ -140,33 +131,25 @@ configure () {
 
 main () {
 
-    local VER=${DEFAULT_VERSION}
-
-    # parse arguments
-    if [[ "$#" -gt 0 ]] ; then
-        VER="$1"  # override the version
-    fi
-
-    if [[ "$#" -gt 1 ]] && [[ "$2" -eq "test" ]] ; then
-        DO_TEST=1
-    fi
+	echo "OPENCV_VERSION=${OPENCV_VERSION}"
+	echo "OPENCV_DO_TEST=${OPENCV_DO_TEST}"
+	echo "OPENCV_BUILD_JOBS=${OPENCV_BUILD_JOBS}"
 
     # prepare for the build:
     setup
     install_dependencies
-    git_source ${VER}
+    git_source ${OPENCV_VERSION}
 
-    if [[ ${DO_TEST} ]] ; then
+    if [[ ${OPENCV_DO_TEST} == "TRUE" ]] ; then
         configure test
     else
         configure
     fi
 
     # start the build
-    make -j${JOBS}
+    gosu builder make -j${OPENCV_BUILD_JOBS}
 
-    if [[ ${DO_TEST} ]] ; then
-        make test  # (make and) run the tests
+    if [[ ${OPENCV_DO_TEST} == "TRUE" ]] ; then
     fi
 
     # avoid a sudo make install (and root owned files in ~) if $PREFIX is writable
