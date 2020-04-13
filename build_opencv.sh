@@ -17,6 +17,10 @@ cleanup () {
 		build-essential \
 		cmake \
 		git \
+        cuda-compiler-10-0 \
+        cuda-minimal-build-10-0 \
+        cuda-libraries-dev-10-0 \
+        libcudnn7-dev \
 		python3-dev
 	# there are probably more -dev packages that can be removed if the 
 	# runtime packages are explicitly added below in install_dependencies
@@ -40,6 +44,10 @@ setup () {
         cleanup
     fi
     mkdir -p ${BUILD_TMP} && chown builder:builder ${BUILD_TMP}
+    echo "CREATING symlink to /usr/local/cuda"
+    ln -rs /usr/local/cuda-10.0 /usr/local/cuda
+    echo "ADDING /usr/local/cuda/bin to PATH"
+    PATH=/usr/local/cuda/bin:$PATH
 }
 
 git_source () {
@@ -55,6 +63,10 @@ install_dependencies () {
     echo "Installing build dependencies."
     apt-get update && apt-get install -y --no-install-recommends \
         gosu \
+        cuda-compiler-10-0 \
+        cuda-minimal-build-10-0 \
+        cuda-libraries-dev-10-0 \
+        libcudnn7-dev \
         build-essential \
         cmake \
         git \
