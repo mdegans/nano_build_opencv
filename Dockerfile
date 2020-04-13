@@ -1,5 +1,4 @@
-# @NVIDIA: if you are reading this, a "latest" tag would be nice
-FROM nvcr.io/nvidia/l4t-base:r32.3.1
+FROM tegra-ubuntu:bionic
 
 ### build argumements ###
 # change these here or with --build-arg FOO="BAR" at build time
