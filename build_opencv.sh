@@ -30,7 +30,7 @@ cleanup () {
 	# this shaves about 20Mb off the image
 	echo "REMOVING apt cache and lists"
 	apt-get clean
-	rm /var/lib/apt/lists/*
+	rm -rf /var/lib/apt/lists/*
 
 	echo "REMOVING builder user and any owned files"
 	deluser --remove-all-files builder
