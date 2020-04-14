@@ -8,32 +8,34 @@ readonly PREFIX=/usr/local  # install prefix, (can be ~/.local for a user instal
 readonly BUILD_TMP=/tmp/build_opencv
 
 cleanup () {
-	echo "REMOVING build files"
+    echo "REMOVING build files"
     rm -rf ${BUILD_TMP}
 
-	echo "REMOVING build dependencies"
-	apt-get purge -y --autoremove \
-		gosu \
-		build-essential \
-		cmake \
-		git \
+    echo "REMOVING build dependencies"
+    apt-get purge -y --autoremove \
+        gosu \
+        build-essential \
+        cmake \
+        git \
         cuda-compiler-10-0 \
         cuda-minimal-build-10-0 \
         cuda-libraries-dev-10-0 \
         libcudnn7-dev \
-		python3-dev
+        python3-dev
+    # there are probably more -dev packages that can be removed if the 
 	# there are probably more -dev packages that can be removed if the 
-	# runtime packages are explicitly added below in install_dependencies
-	# but the above ones I know offhand can be removed without breaking open_cv
-	# TODO(mdegans): separate more build and runtime deps, purge build deps
+    # there are probably more -dev packages that can be removed if the 
+    # runtime packages are explicitly added below in install_dependencies
+    # but the above ones I know offhand can be removed without breaking open_cv
+    # TODO(mdegans): separate more build and runtime deps, purge build deps
 
-	# this shaves about 20Mb off the image
-	echo "REMOVING apt cache and lists"
-	apt-get clean
-	rm -rf /var/lib/apt/lists/*
+    # this shaves about 20Mb off the image
+    echo "REMOVING apt cache and lists"
+    apt-get clean
+    rm -rf /var/lib/apt/lists/*
 
-	echo "REMOVING builder user and any owned files"
-	deluser --remove-all-files builder
+    echo "REMOVING builder user and any owned files"
+    deluser --remove-all-files builder
     echo "CREATING mount point for cuda"
     mkdir /usr/local/cuda-10.0
 }
@@ -53,7 +55,7 @@ setup () {
 }
 
 git_source () {
-	cd ${BUILD_TMP}
+    cd ${BUILD_TMP}
     echo "CLONING version '$1' of OpenCV"
     gosu builder git clone --branch "$1" https://github.com/opencv/opencv.git
     gosu builder git clone --branch "$1" https://github.com/opencv/opencv_contrib.git
@@ -99,7 +101,7 @@ install_dependencies () {
         pkg-config \
         python3-dev \
         python3-numpy \
-		python3-pil \
+        python3-pil \
         python3-matplotlib \
         v4l-utils \
         zlib1g-dev
@@ -144,9 +146,9 @@ configure () {
 
 main () {
 
-	echo "OPENCV_VERSION=${OPENCV_VERSION}"
-	echo "OPENCV_DO_TEST=${OPENCV_DO_TEST}"
-	echo "OPENCV_BUILD_JOBS=${OPENCV_BUILD_JOBS}"
+    echo "OPENCV_VERSION=${OPENCV_VERSION}"
+    echo "OPENCV_DO_TEST=${OPENCV_DO_TEST}"
+    echo "OPENCV_BUILD_JOBS=${OPENCV_BUILD_JOBS}"
 
     # prepare for the build:
     setup
@@ -160,7 +162,7 @@ main () {
     gosu builder make -j${OPENCV_BUILD_JOBS}
 
     if [[ ${OPENCV_DO_TEST} == "TRUE" ]] ; then
-		echo "MAKING tests"
+        echo "MAKING tests"
         gosu builder make test  # (make and) run the tests
     fi
 
