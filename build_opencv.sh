@@ -23,8 +23,6 @@ cleanup () {
         libcudnn7-dev \
         python3-dev
     # there are probably more -dev packages that can be removed if the 
-	# there are probably more -dev packages that can be removed if the 
-    # there are probably more -dev packages that can be removed if the 
     # runtime packages are explicitly added below in install_dependencies
     # but the above ones I know offhand can be removed without breaking open_cv
     # TODO(mdegans): separate more build and runtime deps, purge build deps
