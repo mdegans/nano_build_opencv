@@ -127,7 +127,7 @@ configure () {
         -D WITH_LIBV4L=ON
         -D WITH_OPENGL=ON"
 
-    if ! [[ "$1" -eq "test" ]] ; then
+    if [[ ${OPENCV_DO_TEST} != "TRUE" ]]; then
         CMAKEFLAGS="
         ${CMAKEFLAGS}
         -D BUILD_PERF_TESTS=OFF
@@ -136,7 +136,7 @@ configure () {
 
     echo "cmake flags: ${CMAKEFLAGS}"
 
-    cd opencv
+    cd ${BUILD_TMP}/opencv
     mkdir build && chown builder:builder build
     cd build
     gosu builder cmake ${CMAKEFLAGS} ..
@@ -153,11 +153,8 @@ main () {
     install_dependencies
     git_source ${OPENCV_VERSION}
 
-    if [[ ${OPENCV_DO_TEST} == "TRUE" ]] ; then
-        configure test
-    else
-        configure
-    fi
+    # configure the build
+    configure
 
     # start the build
     gosu builder make -j${OPENCV_BUILD_JOBS}
