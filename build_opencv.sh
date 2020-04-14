@@ -34,6 +34,8 @@ cleanup () {
 
 	echo "REMOVING builder user and any owned files"
 	deluser --remove-all-files builder
+    echo "CREATING mount point for cuda"
+    mkdir /usr/local/cuda-10.0
 }
 
 setup () {
@@ -45,7 +47,7 @@ setup () {
     fi
     mkdir -p ${BUILD_TMP} && chown builder:builder ${BUILD_TMP}
     echo "CREATING symlink to /usr/local/cuda"
-    ln -rs /usr/local/cuda-10.0 /usr/local/cuda
+    ln -s /usr/local/cuda-10.0 /usr/local/cuda
     echo "ADDING /usr/local/cuda/bin to PATH"
     PATH=/usr/local/cuda/bin:$PATH
 }
