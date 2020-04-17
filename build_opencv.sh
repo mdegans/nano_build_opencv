@@ -34,8 +34,6 @@ cleanup () {
 
     echo "REMOVING builder user and any owned files"
     deluser --remove-all-files builder
-    echo "CREATING mount point for cuda"
-    mkdir /usr/local/cuda-10.0
 }
 
 setup () {

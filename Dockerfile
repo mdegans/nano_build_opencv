@@ -1,4 +1,4 @@
-FROM tegra-ubuntu:bionic
+FROM mdegans/l4t-base:latest
 
 ### build argumements ###
 # change these here or with --build-arg FOO="BAR" at build time
@@ -15,4 +15,4 @@ WORKDIR /usr/local/src/build_opencv
 
 COPY build_opencv.sh .
 
-RUN /bin/bash build_opencv.sh ${OPENCV_VERSION}
+RUN /bin/bash build_opencv.sh

@@ -1,16 +1,24 @@
 # OpenCV build script for NVIDIA Jetson Nano
 
-This is the Docker branch, __currently in a broken state__ because `cicc` is not in the l4t base image.
+This is the Docker branch. A build is available
+[here on Docker Hub](https://hub.docker.com/r/mdegans/tegra-opencv).
 
-Related thread on Nvidia developer forum 
-[here](https://devtalk.nvidia.com/default/topic/1051133/jetson-nano/opencv-build-script/).
-
-## Usage:
+## Running pre-built image:
 ```shell
-(clone repo)
-git checkout docker
-(sudo) docker build -t tegra_opencv:latest nano_build_opencv
+(sudo) docker run --runtime nvidia -it --rm mdegans/tegra-opencv:latest
 ```
+
+## Building:
+
+With script on Nano/tx1/tx2:
+```shell
+(sudo) ./build.sh
+```
+With script on Xavier:
+```shell
+(sudo) ./build_xavier.sh
+```
+... Or manually using the docker build and the dockerfiles as usual. Examples below.
 
 ## Specifying an OpenCV version (git branch):
 ```shell
