@@ -122,7 +122,7 @@ configure () {
         -D WITH_LIBV4L=ON
         -D WITH_OPENGL=ON"
 
-    if ! [[ "$1" -eq "test" ]] ; then
+    if [[ "$1" != "test" ]] ; then
         CMAKEFLAGS="
         ${CMAKEFLAGS}
         -D BUILD_PERF_TESTS=OFF
