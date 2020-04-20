@@ -1,4 +1,4 @@
-FROM mdegans/l4t-base:latest
+FROM registry.hub.docker.com/mdegans/l4t-base:latest
 
 ### build argumements ###
 # change these here or with --build-arg FOO="BAR" at build time
