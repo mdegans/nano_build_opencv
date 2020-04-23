@@ -146,7 +146,7 @@ main () {
         VER="$1"  # override the version
     fi
 
-    if [[ "$#" -gt 1 ]] && [[ "$2" -eq "test" ]] ; then
+    if [[ "$#" -gt 1 ]] && [[ "$2" == "test" ]] ; then
         DO_TEST=1
     fi
 
