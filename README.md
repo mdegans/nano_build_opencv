@@ -24,10 +24,10 @@ With script on Xavier:
 ```shell
 (clone repo)
 git checkout docker
-(sudo) docker build --build-arg OPENCV_VERSION="4.1.0" -t tegra_opencv:4.1.0 nano_build_opencv
+(sudo) docker build --build-arg OPENCV_VERSION="4.3.0" -t tegra_opencv:4.1.0 nano_build_opencv
 ```
 
-Where `4.2.0` is any version of openCV from 2.2 to 4.2.0
+Where `4.3.0` is any version of openCV from 2.2 to 4.3.0
 (any valid OpenCV git branch or tag will also attempt to work, however the very old versions have not been tested to build and may require spript modifications.).
 
 
