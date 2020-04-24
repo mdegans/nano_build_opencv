@@ -5,7 +5,7 @@ set -e
 
 # change default constants here:
 readonly PREFIX=/usr/local  # install prefix, (can be ~/.local for a user install)
-readonly DEFAULT_VERSION=4.2.0  # controls the default version (gets reset by the first argument)
+readonly DEFAULT_VERSION=4.3.0  # controls the default version (gets reset by the first argument)
 readonly CPUS=$(nproc)  # controls the number of jobs
 
 # better board detection. if it has 6 or more cpus, it probably has a ton of ram too
@@ -146,7 +146,7 @@ main () {
         VER="$1"  # override the version
     fi
 
-    if [[ "$#" -gt 1 ]] && [[ "$2" -eq "test" ]] ; then
+    if [[ "$#" -gt 1 ]] && [[ "$2" == "test" ]] ; then
         DO_TEST=1
     fi
 
