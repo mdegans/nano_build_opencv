@@ -2,7 +2,7 @@ FROM registry.hub.docker.com/mdegans/l4t-base:latest
 
 ### build argumements ###
 # change these here or with --build-arg FOO="BAR" at build time
-ARG OPENCV_VERSION="4.2.0"
+ARG OPENCV_VERSION="4.3.0"
 ARG OPENCV_DO_TEST="FALSE"
 # note: 8 jobs will fail on Nano. Try 1 instead.
 ARG OPENCV_BUILD_JOBS="1"
