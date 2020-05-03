@@ -6,10 +6,8 @@ ARG OPENCV_VERSION="4.3.0"
 ARG OPENCV_DO_TEST="FALSE"
 # note: 8 jobs will fail on Nano. Try 1 instead.
 ARG OPENCV_BUILD_JOBS="1"
-
-### environment variables ###
 # required for apt-get -y to work properly:
-ENV DEBIAN_FRONTEND=noninteractive
+ARG DEBIAN_FRONTEND=noninteractive
 
 WORKDIR /usr/local/src/build_opencv
 
