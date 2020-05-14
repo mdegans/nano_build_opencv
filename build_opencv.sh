@@ -53,8 +53,8 @@ setup () {
 git_source () {
     cd ${BUILD_TMP}
     echo "CLONING version '$1' of OpenCV"
-    gosu builder git clone --branch "$1" https://github.com/opencv/opencv.git
-    gosu builder git clone --branch "$1" https://github.com/opencv/opencv_contrib.git
+    gosu builder git clone --depth 1 --branch "$1" https://github.com/opencv/opencv.git
+    gosu builder git clone --depth 1 --branch "$1" https://github.com/opencv/opencv_contrib.git
 }
 
 install_dependencies () {
