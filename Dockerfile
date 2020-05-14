@@ -1,4 +1,6 @@
-FROM registry.hub.docker.com/mdegans/l4t-base:latest
+ARG JETPACK_VERSION="r32.4.2"
+
+FROM registry.hub.docker.com/mdegans/l4t-base:${JETPACK_VERSION}
 
 ### build argumements ###
 # change these here or with --build-arg FOO="BAR" at build time

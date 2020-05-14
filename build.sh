@@ -1,1 +1,0 @@
-exec docker build -t mdegans/tegra-opencv:latest . 2>&1 | tee build.log

@@ -10,28 +10,19 @@ This is the Docker branch. A build is available
 
 ## Building:
 
-With script on Nano/tx1/tx2:
+On all tegra boards:
 ```shell
-(sudo) ./build.sh
+(sudo) ./docker_build.sh
 ```
-With script on Xavier:
-```shell
-(sudo) ./build_xavier.sh
-```
-... Or manually using the docker build and the dockerfiles as usual. Examples below.
 
 ## Specifying an OpenCV version (git branch):
-```shell
-(clone repo)
-git checkout docker
-(sudo) docker build --build-arg OPENCV_VERSION="4.3.0" -t tegra_opencv:4.1.0 nano_build_opencv
-```
 
-Where `4.3.0` is any version of openCV from 2.2 to 4.3.0
-(any valid OpenCV git branch or tag will also attempt to work, however the very old versions have not been tested to build and may require spript modifications.).
-
+Just change JETPACK_VERSION and OPENCV_VERSION as needed in the docker_build.sh
 
 ## Other --build-arg options:
+
+For those who want to modify the Dockerfile or use other `--build-arg` options, there are these:
+
 ```Dockerfile
 # Performs tests:
 ARG OPENCV_DO_TEST="FALSE"

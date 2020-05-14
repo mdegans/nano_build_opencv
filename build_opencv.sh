@@ -17,10 +17,10 @@ cleanup () {
         build-essential \
         cmake \
         git \
-        cuda-compiler-10-0 \
-        cuda-minimal-build-10-0 \
-        cuda-libraries-dev-10-0 \
-        libcudnn7-dev \
+        cuda-compiler-10-2 \
+        cuda-minimal-build-10-2 \
+        cuda-libraries-dev-10-2 \
+        libcudnn8-dev \
         python3-dev
     # there are probably more -dev packages that can be removed if the 
     # runtime packages are explicitly added below in install_dependencies
@@ -63,10 +63,10 @@ install_dependencies () {
     echo "Installing build dependencies."
     apt-get update && apt-get install -y --no-install-recommends \
         gosu \
-        cuda-compiler-10-0 \
-        cuda-minimal-build-10-0 \
-        cuda-libraries-dev-10-0 \
-        libcudnn7-dev \
+        cuda-compiler-10-2 \
+        cuda-minimal-build-10-2 \
+        cuda-libraries-dev-10-2 \
+        libcudnn8-dev \
         build-essential \
         cmake \
         git \
@@ -121,6 +121,9 @@ configure () {
         -D OPENCV_GENERATE_PKGCONFIG=ON
         -D WITH_CUBLAS=ON
         -D WITH_CUDA=ON
+        -D WITH_CUDNN=ON
+        -D CUDNN_VERSION='8.0'
+        -D OPENCV_DNN_CUDA=ON
         -D WITH_GSTREAMER=ON
         -D WITH_LIBV4L=ON
         -D WITH_OPENGL=ON"
