@@ -5,7 +5,7 @@ set -e
 
 # change default constants here:
 readonly PREFIX=/usr/local  # install prefix, (can be ~/.local for a user install)
-readonly DEFAULT_VERSION=4.2.0  # controls the default version (gets reset by the first argument)
+readonly DEFAULT_VERSION=4.3.0  # controls the default version (gets reset by the first argument)
 readonly CPUS=$(nproc)  # controls the number of jobs
 
 # better board detection. if it has 6 or more cpus, it probably has a ton of ram too
@@ -45,8 +45,8 @@ setup () {
 
 git_source () {
     echo "Getting version '$1' of OpenCV"
-    git clone --branch "$1" https://github.com/opencv/opencv.git
-    git clone --branch "$1" https://github.com/opencv/opencv_contrib.git
+    git clone --depth 1 --branch "$1" https://github.com/opencv/opencv.git
+    git clone --depth 1 --branch "$1" https://github.com/opencv/opencv_contrib.git
 }
 
 install_dependencies () {
@@ -117,7 +117,7 @@ configure () {
         -D WITH_LIBV4L=ON
         -D WITH_OPENGL=ON"
 
-    if ! [[ "$1" -eq "test" ]] ; then
+    if [[ "$1" != "test" ]] ; then
         CMAKEFLAGS="
         ${CMAKEFLAGS}
         -D BUILD_PERF_TESTS=OFF
@@ -129,7 +129,7 @@ configure () {
     cd opencv
     mkdir build
     cd build
-    cmake ${CMAKEFLAGS} ..
+    cmake ${CMAKEFLAGS} .. 2>&1 | tee -a configure.log
 }
 
 main () {
@@ -141,7 +141,7 @@ main () {
         VER="$1"  # override the version
     fi
 
-    if [[ "$#" -gt 1 ]] && [[ "$2" -eq "test" ]] ; then
+    if [[ "$#" -gt 1 ]] && [[ "$2" == "test" ]] ; then
         DO_TEST=1
     fi
 
@@ -157,17 +157,17 @@ main () {
     fi
 
     # start the build
-    make -j${JOBS}
+    make -j${JOBS} 2>&1 | tee -a build.log
 
     if [[ ${DO_TEST} ]] ; then
-        make test  # (make and) run the tests
+        make test 2>&1 | tee -a test.log
     fi
 
     # avoid a sudo make install (and root owned files in ~) if $PREFIX is writable
     if [[ -w ${PREFIX} ]] ; then
-        make install
+        make install 2>&1 | tee -a install.log
     else
-        sudo make install
+        sudo make install 2>&1 | tee -a install.log
     fi
 
     cleanup --test-warning
