@@ -90,11 +90,6 @@ install_dependencies () {
         libxvidcore-dev \
         libx264-dev \
         pkg-config \
-        python-dev \
-        python-numpy \
-        python3-dev \
-        python3-numpy \
-        python3-matplotlib \
         qv4l2 \
         v4l-utils \
         v4l2ucp \
@@ -104,8 +99,8 @@ install_dependencies () {
 configure () {
     local CMAKEFLAGS="
         -D BUILD_EXAMPLES=OFF
-        -D BUILD_opencv_python2=ON
-        -D BUILD_opencv_python3=ON
+        -D BUILD_opencv_python2=OFF
+        -D BUILD_opencv_python3=OFF
         -D CMAKE_BUILD_TYPE=RELEASE
         -D CMAKE_INSTALL_PREFIX=${PREFIX}
         -D CUDA_ARCH_BIN=5.3,6.2,7.2
