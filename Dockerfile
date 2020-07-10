@@ -1,4 +1,4 @@
-ARG JETPACK_VERSION="r32.4.2"
+ARG JETPACK_VERSION="r32.4.3"
 
 FROM registry.hub.docker.com/mdegans/l4t-base:${JETPACK_VERSION}
 

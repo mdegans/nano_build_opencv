@@ -15,6 +15,7 @@ cleanup () {
     apt-get purge -y --autoremove \
         gosu \
         build-essential \
+        ca-certificates \
         cmake \
         git \
         cuda-compiler-10-2 \
@@ -61,6 +62,11 @@ install_dependencies () {
     # open-cv has a lot of dependencies, but most can be found in the default
     # package repository or should already be installed (eg. CUDA).
     echo "Installing build dependencies."
+    # well, shit, they fixed it, so we do this to get the certs temporarily
+    mv /etc/apt/sources.list.d/nvidia-l4t-apt-source.list /etc/apt/
+    apt-get update && apt-get install -y --no-install-recommends \
+        ca-certificates
+    mv /etc/apt/nvidia-l4t-apt-source.list /etc/apt/sources.list.d
     apt-get update && apt-get install -y --no-install-recommends \
         gosu \
         cuda-compiler-10-2 \
@@ -144,6 +150,11 @@ configure () {
 }
 
 main () {
+
+    if ! [[ -f "./.dockerenv" ]]; then
+        echo "this script will break your system if run outside docker" 1>&2
+        exit 1
+    fi
 
     echo "OPENCV_VERSION=${OPENCV_VERSION}"
     echo "OPENCV_DO_TEST=${OPENCV_DO_TEST}"
