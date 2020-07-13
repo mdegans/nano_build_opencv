@@ -4,7 +4,7 @@ set -ex
 
 # just change these to bump the version
 readonly JETPACK_VERSION="r32.4.3"
-readonly OPENCV_VERSION="4.3.0"
+readonly OPENCV_VERSION="master"
 
 # build the image
 docker build --pull \
@@ -12,6 +12,5 @@ docker build --pull \
     --build-arg JETPACK_VERSION=${JETPACK_VERSION} \
     --build-arg OPENCV_VERSION=${OPENCV_VERSION} \
     -t mdegans/tegra-opencv:jp-${JETPACK_VERSION}-cv-${OPENCV_VERSION} \
+    -t mdegans/tegra-opencv:latest \
     . 2>&1 | tee build.log
-# tag it as latest
-docker tag mdegans/tegra-opencv:jp-${JETPACK_VERSION}-cv-${OPENCV_VERSION} mdegans/tegra-opencv:latest
