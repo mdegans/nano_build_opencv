@@ -151,7 +151,7 @@ configure () {
 
 main () {
 
-    if ! [[ -f "./.dockerenv" ]]; then
+    if [[ ! -f "/.dockerenv" ]]; then
         echo "this script will break your system if run outside docker" 1>&2
         exit 1
     fi
