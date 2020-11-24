@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 # 2019 Michael de Gans
 
 set -ex

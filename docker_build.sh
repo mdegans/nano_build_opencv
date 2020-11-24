@@ -1,4 +1,4 @@
-# this builds the same images as build.sh, just with 8 jobs
+#!/bin/bash
 
 set -ex
 
