@@ -4,7 +4,13 @@
 set -e
 
 # change default constants here:
-readonly PREFIX=/usr/local  # install prefix, (can be ~/.local for a user install)
+if [[ "$MAKE_DEB" == "TRUE" ]] ; then
+    # debian packages should almost always have this prefix
+    readonly PREFIX=/usr
+else
+    readonly PREFIX=/usr/local  # install prefix, (can be ~/.local for a user install)
+
+fi
 readonly DEFAULT_VERSION=4.5.0  # controls the default version (gets reset by the first argument)
 readonly CPUS=$(nproc)  # controls the number of jobs
 
@@ -132,6 +138,12 @@ configure () {
         -D BUILD_TESTS=OFF"
     fi
 
+    if [[ "$MAKE_DEB" == "TRUE" ]] ; then
+        CMAKEFLAGS="
+        ${CMAKEFLAGS}
+        -D CPACK_BINARY_DEB=ON"
+    fi
+
     echo "cmake flags: ${CMAKEFLAGS}"
 
     cd opencv
@@ -171,15 +183,18 @@ main () {
         make test 2>&1 | tee -a test.log
     fi
 
-    # avoid a sudo make install (and root owned files in ~) if $PREFIX is writable
-    if [[ -w ${PREFIX} ]] ; then
-        make install 2>&1 | tee -a install.log
+    if [[ "$MAKE_DEB" == "TRUE" ]] ; then
+        make package
     else
-        sudo make install 2>&1 | tee -a install.log
+        # avoid a sudo make install (and root owned files in ~) if $PREFIX is writable
+        if [[ -w ${PREFIX} ]] ; then
+            make install 2>&1 | tee -a install.log
+        else
+            sudo make install 2>&1 | tee -a install.log
+        fi
+
+        cleanup --test-warning
     fi
-
-    cleanup --test-warning
-
 }
 
 main "$@"
