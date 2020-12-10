@@ -150,7 +150,7 @@ configure () {
     cd opencv
     mkdir build
     cd build
-    cmake ${CMAKEFLAGS} .. 2>&1 | tee -a configure.log
+    cmake "${CMAKEFLAGS}" .. 2>&1 | tee -a configure.log
 }
 
 main () {
@@ -169,7 +169,7 @@ main () {
     # prepare for the build:
     setup
     install_dependencies
-    git_source ${VER}
+    git_source "${VER}"
 
     if [[ ${DO_TEST} ]] ; then
         configure test
