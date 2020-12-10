@@ -7,6 +7,7 @@ set -e
 readonly PREFIX=/usr/local  # install prefix, (can be ~/.local for a user install)
 readonly DEFAULT_VERSION=4.5.0  # controls the default version (gets reset by the first argument)
 readonly CPUS=$(nproc)  # controls the number of jobs
+readonly BUILD_DIR=$PWD/build_opencv
 
 # better board detection. if it has 6 or more cpus, it probably has a ton of ram too
 if [[ $CPUS -gt 5 ]]; then
@@ -20,13 +21,13 @@ fi
 cleanup () {
 # https://stackoverflow.com/questions/226703/how-do-i-prompt-for-yes-no-cancel-input-in-a-linux-shell-script
     while true ; do
-        echo "Do you wish to remove temporary build files in /tmp/build_opencv ? "
+        echo "Do you wish to remove temporary build files in $BUILD_DIR ? "
         if ! [[ "$1" -eq "--test-warning" ]] ; then
             echo "(Doing so may make running tests on the build later impossible)"
         fi
-        read -p "Y/N " yn
+        read -r -p "Y/N " yn
         case ${yn} in
-            [Yy]* ) rm -rf /tmp/build_opencv ; break;;
+            [Yy]* ) rm -rf "$BUILD_DIR" ; break;;
             [Nn]* ) exit ;;
             * ) echo "Please answer yes or no." ;;
         esac
@@ -34,13 +35,12 @@ cleanup () {
 }
 
 setup () {
-    cd /tmp
-    if [[ -d "build_opencv" ]] ; then
-        echo "It appears an existing build exists in /tmp/build_opencv"
+    if [[ -d "$BUILD_DIR" ]] ; then
+        echo "It appears an existing build exists in $BUILD_DIR"
         cleanup
     fi
-    mkdir build_opencv
-    cd build_opencv
+    mkdir "$BUILD_DIR"
+    cd "$BUILD_DIR"
 }
 
 git_source () {
@@ -116,7 +116,7 @@ configure () {
         -D ENABLE_NEON=ON
         -D OPENCV_DNN_CUDA=ON
         -D OPENCV_ENABLE_NONFREE=ON
-        -D OPENCV_EXTRA_MODULES_PATH=/tmp/build_opencv/opencv_contrib/modules
+        -D OPENCV_EXTRA_MODULES_PATH=$BUILD_DIR/opencv_contrib/modules
         -D OPENCV_GENERATE_PKGCONFIG=ON
         -D WITH_CUBLAS=ON
         -D WITH_CUDA=ON
