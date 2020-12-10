@@ -53,6 +53,7 @@ git_source () {
 
 build_ffmpeg () {
     sudo apt install -y \
+        libva-dev \
         libx264-dev \
         libx265-dev
     echo "building ffmpeg $FFMPEG_VER"
@@ -214,7 +215,7 @@ main () {
         sudo make install 2>&1 | tee -a install.log
     fi
 
-    cleanup --test-warning
+    cleanup "--test-warning"
 
 }
 
