@@ -9,6 +9,7 @@ readonly DEFAULT_VERSION=4.5.0  # controls the default version (gets reset by th
 readonly CPUS=$(nproc)  # controls the number of jobs
 readonly ARCH=$(arch)
 readonly BUILD_DIR=$PWD/build_opencv
+readonly FFMPEG_VER="release/4.3"
 
 # better board detection. if it has 6 or more cpus, it probably has a ton of ram too
 if [[ $CPUS -gt 5 ]]; then
@@ -48,6 +49,25 @@ git_source () {
     echo "Getting version '$1' of OpenCV"
     git clone --depth 1 --branch "$1" https://github.com/opencv/opencv.git
     git clone --depth 1 --branch "$1" https://github.com/opencv/opencv_contrib.git
+}
+
+build_ffmpeg () {
+    sudo apt install -y \
+        libx264-dev \
+        libx265-dev
+    echo "building ffmpeg $FFMPEG_VER"
+    git clone https://git.ffmpeg.org/ffmpeg.git --depth 1 --branch "$FFMPEG_VER"
+    pushd ffmpeg
+    ./configure \
+        --disable-static \
+        --enable-shared \
+        --enable-libx264 \
+        --enable-libx265 \
+        --enable-gpl \
+        "--prefix=$PREFIX"
+    make -j${JOBS}
+    sudo make install
+    popd
 }
 
 install_dependencies () {
@@ -105,6 +125,9 @@ install_dependencies () {
         sudo apt-get install -y \
             python-dev \
             python-numpy
+    fi
+    if [[ "$ARCH" != "aarch64" ]] ; then
+        build_ffmpeg
     fi
 }
 
