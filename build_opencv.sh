@@ -7,6 +7,7 @@ set -e
 readonly PREFIX=/usr/local  # install prefix, (can be ~/.local for a user install)
 readonly DEFAULT_VERSION=4.5.0  # controls the default version (gets reset by the first argument)
 readonly CPUS=$(nproc)  # controls the number of jobs
+readonly ARCH=$(arch)
 readonly BUILD_DIR=$PWD/build_opencv
 
 # better board detection. if it has 6 or more cpus, it probably has a ton of ram too
@@ -90,14 +91,21 @@ install_dependencies () {
         libxvidcore-dev \
         libx264-dev \
         pkg-config \
-        python-dev \
-        python-numpy \
         python3-dev \
         python3-numpy \
         python3-matplotlib \
         qv4l2 \
         v4l-utils \
         zlib1g-dev
+    if [[ "$ARCH" == "aarch64" ]] ; then
+        # L4T is still 18.04 based and has python2 installed by default (iirc)
+        # so might as well install what's needed for a python2 opencv module
+        # on other architectures, we'll just assume nobody cares about python2
+        # really, this is lazy, but so is not updating your code for python3 :P
+        sudo apt-get install -y \
+            python-dev \
+            python-numpy
+    fi
 }
 
 configure () {
@@ -107,10 +115,7 @@ configure () {
         -D BUILD_opencv_python3=ON
         -D CMAKE_BUILD_TYPE=RELEASE
         -D CMAKE_INSTALL_PREFIX=${PREFIX}
-        -D CUDA_ARCH_BIN=5.3,6.2,7.2
-        -D CUDA_ARCH_PTX=
         -D CUDA_FAST_MATH=ON
-        -D CUDNN_VERSION='8.0'
         -D EIGEN_INCLUDE_PATH=/usr/include/eigen3 
         -D ENABLE_NEON=ON
         -D OPENCV_DNN_CUDA=ON
@@ -129,6 +134,15 @@ configure () {
         ${CMAKEFLAGS}
         -D BUILD_PERF_TESTS=OFF
         -D BUILD_TESTS=OFF"
+    fi
+
+    if [[ "$ARCH" == "aarch64" ]] ; then
+        CMAKEFLAGS="
+        ${CMAKEFLAGS}
+        -D CUDA_ARCH_BIN=5.3,6.2,7.2
+        -D CUDA_ARCH_PTX=
+        -D BUILD_PERF_TESTS=OFF
+        -D CUDNN_VERSION='8.0'"
     fi
 
     echo "cmake flags: ${CMAKEFLAGS}"
