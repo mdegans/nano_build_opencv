@@ -55,7 +55,8 @@ build_ffmpeg () {
     sudo apt install -y \
         libva-dev \
         libx264-dev \
-        libx265-dev
+        libx265-dev \
+        nasm
     echo "building ffmpeg $FFMPEG_VER"
     git clone https://git.ffmpeg.org/ffmpeg.git --depth 1 --branch "$FFMPEG_VER"
     pushd ffmpeg
