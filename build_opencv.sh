@@ -10,6 +10,7 @@ readonly CPUS=$(nproc)  # controls the number of jobs
 readonly ARCH=$(arch)
 readonly BUILD_DIR=$PWD/build_opencv
 readonly FFMPEG_VER="release/4.3"
+readonly OPENCV_TEST_DATA_PATH="$BUILD_DIR/opencv_extra/testdata"
 
 # better board detection. if it has 6 or more cpus, it probably has a ton of ram too
 if [[ $CPUS -gt 5 ]]; then
@@ -49,6 +50,9 @@ git_source () {
     echo "Getting version '$1' of OpenCV"
     git clone --depth 1 --branch "$1" https://github.com/opencv/opencv.git
     git clone --depth 1 --branch "$1" https://github.com/opencv/opencv_contrib.git
+    if [[ "$2" == "test" ]] ; then
+        git clone --depth 1 --branch "$1" https://github.com/opencv/opencv_extra.git
+    fi
 }
 
 build_ffmpeg () {
@@ -142,6 +146,7 @@ configure () {
         -D CUDA_FAST_MATH=ON
         -D EIGEN_INCLUDE_PATH=/usr/include/eigen3 
         -D ENABLE_NEON=ON
+        -D INSTALL_TESTS=OFF
         -D OPENCV_DNN_CUDA=ON
         -D OPENCV_ENABLE_NONFREE=ON
         -D OPENCV_EXTRA_MODULES_PATH=$BUILD_DIR/opencv_contrib/modules
@@ -153,7 +158,14 @@ configure () {
         -D WITH_LIBV4L=ON
         -D WITH_OPENGL=ON"
 
-    if [[ "$1" != "test" ]] ; then
+    if [[ "$1" == "test" ]] ; then
+        # append flags to build tests, except performance tests
+        CMAKEFLAGS="
+        ${CMAKEFLAGS}
+        -D BUILD_TESTS=ON
+        -D OPENCV_TEST_DATA_PATH=$OPENCV_TEST_DATA_PATH"
+    else
+        # disable the building and install of tests
         CMAKEFLAGS="
         ${CMAKEFLAGS}
         -D BUILD_PERF_TESTS=OFF
@@ -161,6 +173,7 @@ configure () {
     fi
 
     if [[ "$ARCH" == "aarch64" ]] ; then
+        # append Tegra specific flags
         CMAKEFLAGS="
         ${CMAKEFLAGS}
         -D CUDA_ARCH_BIN=5.3,6.2,7.2
@@ -170,6 +183,7 @@ configure () {
     fi
 
     echo "cmake flags: ${CMAKEFLAGS}"
+    echo "$CMAKEFLAGS" > cmakeflags.log
 
     cd opencv
     mkdir build
@@ -186,25 +200,18 @@ main () {
         VER="$1"  # override the version
     fi
 
-    if [[ "$#" -gt 1 ]] && [[ "$2" == "test" ]] ; then
-        DO_TEST=1
-    fi
-
     # prepare for the build:
     setup
     install_dependencies
-    git_source "${VER}"
+    git_source "${VER}" "$2"
 
-    if [[ ${DO_TEST} ]] ; then
-        configure test
-    else
-        configure
-    fi
+    configure "$2"
 
     # start the build
     make -j${JOBS} 2>&1 | tee -a build.log
 
-    if [[ ${DO_TEST} ]] ; then
+    # run tests if asked
+    if [[ "$2" == "test" ]] ; then
         make test 2>&1 | tee -a test.log
     fi
 
