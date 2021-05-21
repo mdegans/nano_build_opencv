@@ -3,8 +3,8 @@
 set -ex
 
 # just change these to bump the version
-readonly JETPACK_VERSION="r32.4.3"
-readonly OPENCV_VERSION="master"
+readonly JETPACK_VERSION="r32.5.0"
+readonly OPENCV_VERSION="4.5.1"
 
 # build the image
 docker build --pull \
