@@ -65,7 +65,6 @@ install_dependencies () {
         libavformat-dev \
         libavresample-dev \
         libcanberra-gtk3-module \
-        libdc1394-22-dev \
         libeigen3-dev \
         libglew-dev \
         libgstreamer-plugins-base1.0-dev \
@@ -90,8 +89,7 @@ install_dependencies () {
         libxvidcore-dev \
         libx264-dev \
         pkg-config \
-        python-dev \
-        python-numpy \
+        python-dev-is-python3 \
         python3-dev \
         python3-numpy \
         python3-matplotlib \
