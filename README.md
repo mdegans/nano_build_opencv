@@ -5,7 +5,8 @@
 This script builds OpenCV and the opencv_contrib modules from source, with
 Python 3 bindings. It was written for Tegra (Jetson Nano, TX1/TX2, Xavier, Orin)
 but works on any Debian or Ubuntu machine, x86_64 or aarch64, with or without
-CUDA. It is tested in CI on Ubuntu 22.04 and 24.04 (x86_64 and arm64).
+CUDA. It is tested in CI on Ubuntu 18.04, 20.04, 22.04 and 24.04, on x86_64
+and arm64.
 
 Related thread on Nvidia developer forum
 [here](https://devtalk.nvidia.com/default/topic/1051133/jetson-nano/opencv-build-script/).
@@ -46,13 +47,30 @@ Set these as environment variables, e.g. `PREFIX=~/.local ./build_opencv.sh`.
 | `CUDA_ARCH_BIN`     | auto                 | Compute capabilities, e.g. `8.7`. Detected from the Jetson SoC or `nvidia-smi`, otherwise OpenCV detects the local GPU. |
 | `WITH_CONTRIB`      | `ON`                 | Build the opencv_contrib modules (including nonfree). |
 | `INSTALL_DEPS`      | `ON`                 | Install build dependencies with `apt-get`. |
+| `PYTHON3`           | `python3` on `PATH`  | Interpreter to build the bindings for. It needs numpy; use `/usr/bin/python3` if you have pyenv/conda first on your `PATH`. |
 | `CLEANUP`           | `ask`                | `yes`, `no` or `ask` whether to remove `BUILD_DIR` (when an old build exists, and after installing). Defaults to `no` when not run interactively. |
 | `EXTRA_CMAKE_FLAGS` |                      | Extra flags passed to cmake, e.g. `"-D WITH_QT=ON"`. |
 
 cuDNN (and the CUDA DNN backend) is enabled automatically when its headers are
 found.
 
-**JetPack NOTE:** the CUDA version shipped with your JetPack limits which
-OpenCV versions will build; for JetPack 4.4 the minimum is 4.4.0. On
-non-Debian distributions the dependencies are not installed automatically;
-install them with your package manager and the rest of the script will work.
+## Jetson / JetPack
+
+On a Jetson the CUDA architecture is picked from the SoC (Nano/TX1 5.3, TX2 6.2,
+Xavier 7.2, Orin 8.7), and CUDA is found in `/usr/local/cuda` even if it isn't
+on your `PATH`. The script also works when building without a GPU driver
+(e.g. in a container), by linking against the CUDA stub library; set
+`CUDA_ARCH_BIN` in that case, otherwise OpenCV builds for every architecture.
+
+CI builds the script on Ubuntu 18.04 (JetPack 4) and 20.04 (JetPack 5) on
+arm64, and does a CUDA 12.8 + cuDNN 9 build for Orin (`sm_87`). It has no Jetson
+hardware or GPU, so nothing CUDA related is *run* in CI.
+
+The CUDA version shipped with your JetPack limits which OpenCV versions will
+build; for JetPack 4.4 the minimum is 4.4.0.
+
+## Other distributions
+
+On non-Debian distributions the dependencies are not installed automatically;
+install them with your package manager, run with `INSTALL_DEPS=OFF`, and the
+rest of the script will work.
