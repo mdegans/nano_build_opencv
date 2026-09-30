@@ -53,3 +53,73 @@ jobs:
           name: logs-${{ matrix.os }}
           path: /tmp/build_opencv/opencv/build/*.log
           if-no-files-found: ignore
+
+  # The Ubuntu releases JetPack is based on, on arm64 (no CUDA): 18.04 is
+  # JetPack 4 (Nano, TX1/TX2, Xavier), 20.04 is JetPack 5 (Xavier, Orin).
+  # Run in plain docker since actions don't support containers this old.
+  build-jetpack-distro:
+    needs: shellcheck
+    strategy:
+      fail-fast: false
+      matrix:
+        image: ["ubuntu:18.04", "ubuntu:20.04"]
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build and install in ${{ matrix.image }}
+        run: |
+          docker run --rm -v "$PWD:/src" -w /src \
+            -e CLEANUP=no -e VERSION="${{ inputs.version }}" \
+            ${{ matrix.image }} bash -c '
+              set -e
+              ./build_opencv.sh "$VERSION"
+              python3 -c "import cv2; print(cv2.__version__)"
+              pkg-config --modversion opencv4
+            '
+
+  # There's no GPU on the hosted runners, so this only compiles. It checks the
+  # CUDA/cuDNN detection and that OpenCV's CUDA modules build, using the same
+  # /usr/local/cuda layout JetPack uses, targeting Orin (sm_87).
+  build-cuda:
+    needs: shellcheck
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache || true
+          df -h /
+
+      - name: Install CUDA and cuDNN
+        run: |
+          wget -q https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/cuda-keyring_1.1-1_all.deb
+          sudo dpkg -i cuda-keyring_1.1-1_all.deb
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            cuda-nvcc-12-8 cuda-libraries-dev-12-8 cudnn9-cuda-12
+          sudo ln -sfn /usr/local/cuda-12.8 /usr/local/cuda
+
+      - name: Build and install
+        env:
+          CLEANUP: "no"
+          CUDA_ARCH_BIN: "8.7"
+        run: ./build_opencv.sh "${{ inputs.version }}"
+
+      - name: Check the install
+        run: |
+          python3 -c "import cv2; print(cv2.getBuildInformation())" | tee buildinfo.txt
+          grep -E "NVIDIA CUDA: +YES" buildinfo.txt
+          grep -E "cuDNN: +YES" buildinfo.txt
+          python3 -c "import cv2; assert hasattr(cv2, 'cuda_GpuMat') or hasattr(cv2.cuda, 'GpuMat')"
+
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs-cuda
+          path: /tmp/build_opencv/opencv/build/*.log
+          if-no-files-found: ignore

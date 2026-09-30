@@ -126,18 +126,19 @@ install_dependencies () {
     export DEBIAN_FRONTEND=noninteractive
     ${SUDO} apt-get update
     # Packages come and go between Ubuntu releases, so only ask for the ones
-    # this release actually has. Nothing in the list is strictly required
-    # except the compiler, cmake, git and python3.
+    # this release actually has. "a|b" means the first of a or b that is
+    # available. Nothing in the list is strictly required except the
+    # compiler, cmake, git and python3.
     local wanted=(
         build-essential
+        ca-certificates
         cmake
         git
         gfortran
         libavcodec-dev
         libavformat-dev
         libcanberra-gtk3-module
-        libdc1394-dev
-        libdc1394-22-dev
+        "libdc1394-dev|libdc1394-22-dev"
         libeigen3-dev
         libglew-dev
         libgstreamer-plugins-base1.0-dev
@@ -166,13 +167,15 @@ install_dependencies () {
         v4l-utils
         zlib1g-dev
     )
-    local available=() pkg
-    for pkg in "${wanted[@]}" ; do
-        if [[ -n "$(apt-cache policy "${pkg}" 2>/dev/null | awk '/Candidate:/ && $2 != "(none)"')" ]] ; then
-            available+=("${pkg}")
-        else
-            echo "Package ${pkg} is not available here, skipping it."
-        fi
+    local available=() entry pkg
+    for entry in "${wanted[@]}" ; do
+        for pkg in ${entry//|/ } ; do
+            if [[ -n "$(apt-cache policy "${pkg}" 2>/dev/null | awk '/Candidate:/ && $2 != "(none)"')" ]] ; then
+                available+=("${pkg}")
+                continue 2
+            fi
+        done
+        echo "Package ${entry} is not available here, skipping it."
     done
     ${SUDO} apt-get install -y --no-install-recommends "${available[@]}"
 }
@@ -271,6 +274,13 @@ configure () {
             # let OpenCV figure out what GPU is in this machine
             CMAKEFLAGS+=(-D CUDA_GENERATION=Auto)
         fi
+        # libcuda.so comes with the driver, not the toolkit. When building on a
+        # machine without the driver (eg. in a container) link to the stub.
+        if ! ldconfig -p | grep -q "libcuda.so " && \
+                [[ -e /usr/local/cuda/lib64/stubs/libcuda.so ]] ; then
+            echo "libcuda.so not found, linking against the CUDA stub library."
+            CMAKEFLAGS+=(-D CUDA_CUDA_LIBRARY=/usr/local/cuda/lib64/stubs/libcuda.so)
+        fi
         if have_cudnn ; then
             CMAKEFLAGS+=(-D WITH_CUDNN=ON -D OPENCV_DNN_CUDA=ON)
         else
@@ -343,7 +353,7 @@ main () {
     configure "${DO_TEST}"
 
     # start the build
-    cmake --build . --parallel "${JOBS}" 2>&1 | tee -a build.log
+    cmake --build . -- -j"${JOBS}" 2>&1 | tee -a build.log
 
     if [[ -n "${DO_TEST}" ]] ; then
         run_tests
@@ -352,9 +362,9 @@ main () {
     # avoid a sudo make install (and root owned files in ~) if $PREFIX is writable
     mkdir -p "${PREFIX}" 2>/dev/null || true
     if [[ -w ${PREFIX} ]] ; then
-        cmake --install . 2>&1 | tee -a install.log
+        cmake --build . --target install 2>&1 | tee -a install.log
     else
-        ${SUDO} cmake --install . 2>&1 | tee -a install.log
+        ${SUDO} cmake --build . --target install 2>&1 | tee -a install.log
     fi
     # refresh the linker cache for system-wide installs
     if [[ "${PREFIX}" != "${HOME}"* ]] ; then
