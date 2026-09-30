@@ -30,6 +30,20 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-22.04, ubuntu-24.04, ubuntu-24.04-arm]
+        include:
+          # G-API tests that expect results bit-exact with OpenCV's own
+          # functions, which differ by 1 on aarch64 where OpenCV uses the
+          # KleidiCV HAL by default. Upstream, not related to this script:
+          # https://github.com/opencv/opencv/issues/29985
+          # https://github.com/opencv/opencv/issues/25749
+          - os: ubuntu-24.04-arm
+            extra_test_exclude: ":PatternMatchingIntegrationE2E.*\
+              :MathOperatorTestFluid/MathOperatorMatMatTest.*\
+              :BuildOptFlowPyramidTestCPU/BuildOptFlowPyramidTest.*\
+              :*/ResizeTestFluid.*\
+              :ResizeTestCPU/ResizeAndAnotherReaderTest.*\
+              :ResizeTestCPU/BlursAfterResizeTest.*\
+              :Fluid/NV12PlusResizeTest.*"
     runs-on: ${{ matrix.os }}
     timeout-minutes: 300
     steps:
@@ -52,7 +66,7 @@ jobs:
           # related to this script:
           # https://github.com/opencv/opencv/issues/23116
           # https://github.com/opencv/opencv/issues/25547
-          TEST_EXCLUDE: "Media.audio/mp4_1CN_GSTREAMER:videoio/videoio_bunny.frame_count/avi_GSTREAMER"
+          TEST_EXCLUDE: "Media.audio/mp4_1CN_GSTREAMER:videoio/videoio_bunny.frame_count/avi_GSTREAMER${{ matrix.extra_test_exclude }}"
         run: ./build_opencv.sh "${{ inputs.version }}" test
 
       - name: Check the install
