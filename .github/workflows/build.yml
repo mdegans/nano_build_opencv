@@ -36,6 +36,13 @@ jobs:
           # KleidiCV HAL by default. Upstream, not related to this script:
           # https://github.com/opencv/opencv/issues/29985
           # https://github.com/opencv/opencv/issues/25749
+          # AsyncAPICancelation fails on purpose when built with GCC 11 ("Test
+          # code is not available due to compilation error with GCC 11").
+          # The MJPEG-over-GStreamer read fails with GStreamer 1.20
+          # (gst_sample_get_caps() returns NULL) but passes with 1.24 on 24.04.
+          - os: ubuntu-22.04
+            extra_test_exclude: ":AsyncAPICancelation/*\
+              :videoio/videocapture_acceleration.read/yuv420p_mjpeg_mp4_GSTREAMER_*"
           - os: ubuntu-24.04-arm
             extra_test_exclude: ":PatternMatchingIntegrationE2E.*\
               :MathOperatorTestFluid/MathOperatorMatMatTest.*\
