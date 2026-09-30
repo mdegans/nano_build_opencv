@@ -48,6 +48,11 @@ jobs:
       - name: Build, test and install
         env:
           CLEANUP: "no"
+          # Known upstream failures with GStreamer 1.24 (Ubuntu 24.04), not
+          # related to this script:
+          # https://github.com/opencv/opencv/issues/23116
+          # https://github.com/opencv/opencv/issues/25547
+          TEST_EXCLUDE: "Media.audio/mp4_1CN_GSTREAMER:videoio/videoio_bunny.frame_count/avi_GSTREAMER"
         run: ./build_opencv.sh "${{ inputs.version }}" test
 
       - name: Check the install
