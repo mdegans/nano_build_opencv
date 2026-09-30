@@ -236,6 +236,19 @@ find_python () {
     echo "Python: ${PYTHON3}"
 }
 
+python_install_path () {
+    # Debian's python looks in dist-packages, not site-packages, but before
+    # python 3.10 sysconfig doesn't say so and OpenCV installs the bindings
+    # where they can't be imported. Use dist-packages if the interpreter
+    # searches it under our prefix.
+    "${PYTHON3}" - "${PREFIX}" <<'PY' 2>/dev/null || true
+import os, sys
+rel = "lib/python%d.%d/dist-packages" % sys.version_info[:2]
+if os.path.join(os.path.abspath(sys.argv[1]), rel) in sys.path:
+    print(rel)
+PY
+}
+
 configure () {
     local CMAKEFLAGS=(
         -D BUILD_EXAMPLES=OFF
@@ -250,6 +263,12 @@ configure () {
         -D WITH_OPENGL=ON
         -D WITH_TBB=ON
     )
+
+    local py_path
+    py_path=$(python_install_path)
+    if [[ -n "${py_path}" ]] ; then
+        CMAKEFLAGS+=(-D OPENCV_PYTHON3_INSTALL_PATH="${py_path}")
+    fi
 
     if [[ "${WITH_CONTRIB}" == "ON" ]] ; then
         CMAKEFLAGS+=(
