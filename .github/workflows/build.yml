@@ -1,0 +1,160 @@
+name: build
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: OpenCV version (git tag or branch)
+        default: ""
+  schedule:
+    # monthly, to catch distro package changes
+    - cron: "17 4 1 * *"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  shellcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: shellcheck build_opencv.sh
+
+  build:
+    needs: shellcheck
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-22.04, ubuntu-24.04, ubuntu-24.04-arm]
+        include:
+          # G-API tests that expect results bit-exact with OpenCV's own
+          # functions, which differ by 1 on aarch64 where OpenCV uses the
+          # KleidiCV HAL by default. Upstream, not related to this script:
+          # https://github.com/opencv/opencv/issues/29985
+          # https://github.com/opencv/opencv/issues/25749
+          # AsyncAPICancelation fails on purpose when built with GCC 11 ("Test
+          # code is not available due to compilation error with GCC 11").
+          # The MJPEG-over-GStreamer read fails with GStreamer 1.20
+          # (gst_sample_get_caps() returns NULL) but passes with 1.24 on 24.04.
+          - os: ubuntu-22.04
+            extra_test_exclude: ":AsyncAPICancelation/*\
+              :videoio/videocapture_acceleration.read/yuv420p_mjpeg_mp4_GSTREAMER_*"
+          - os: ubuntu-24.04-arm
+            extra_test_exclude: ":PatternMatchingIntegrationE2E.*\
+              :MathOperatorTestFluid/MathOperatorMatMatTest.*\
+              :BuildOptFlowPyramidTestCPU/BuildOptFlowPyramidTest.*\
+              :*/ResizeTestFluid.*\
+              :ResizeTestCPU/ResizeAndAnotherReaderTest.*\
+              :ResizeTestCPU/BlursAfterResizeTest.*\
+              :Fluid/NV12PlusResizeTest.*"
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL || true
+          df -h /
+
+      # The runner images ship clang's libunwind-*-dev, which conflicts with
+      # libunwind-dev (needed by libgstreamer1.0-dev). Stock Ubuntu doesn't.
+      - name: Remove conflicting runner packages
+        run: sudo apt-get remove -y 'libunwind-*-dev' || true
+
+      - name: Build, test and install
+        env:
+          CLEANUP: "no"
+          # Known upstream failures with GStreamer 1.24 (Ubuntu 24.04), not
+          # related to this script:
+          # https://github.com/opencv/opencv/issues/23116
+          # https://github.com/opencv/opencv/issues/25547
+          TEST_EXCLUDE: "Media.audio/mp4_1CN_GSTREAMER:videoio/videoio_bunny.frame_count/avi_GSTREAMER${{ matrix.extra_test_exclude }}"
+        run: ./build_opencv.sh "${{ inputs.version }}" test
+
+      - name: Check the install
+        run: |
+          python3 -c "import cv2; print(cv2.__version__); print(cv2.getBuildInformation())"
+          pkg-config --modversion opencv4
+
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs-${{ matrix.os }}
+          path: /tmp/build_opencv/opencv/build/*.log
+          if-no-files-found: ignore
+
+  # The Ubuntu releases JetPack is based on, on arm64 (no CUDA): 18.04 is
+  # JetPack 4 (Nano, TX1/TX2, Xavier), 20.04 is JetPack 5 (Xavier, Orin).
+  # Run in plain docker since actions don't support containers this old.
+  build-jetpack-distro:
+    needs: shellcheck
+    strategy:
+      fail-fast: false
+      matrix:
+        image: ["ubuntu:18.04", "ubuntu:20.04"]
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build and install in ${{ matrix.image }}
+        run: |
+          docker run --rm -v "$PWD:/src" -w /src \
+            -e CLEANUP=no -e VERSION="${{ inputs.version }}" \
+            ${{ matrix.image }} bash -c '
+              set -e
+              ./build_opencv.sh "$VERSION"
+              python3 -c "import cv2; print(cv2.__version__)"
+              pkg-config --modversion opencv4
+            '
+
+  # There's no GPU on the hosted runners, so this only compiles. It checks the
+  # CUDA/cuDNN detection and that OpenCV's CUDA modules build, using the same
+  # /usr/local/cuda layout JetPack uses, targeting Orin (sm_87).
+  build-cuda:
+    needs: shellcheck
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache || true
+          df -h /
+
+      - name: Install CUDA and cuDNN
+        run: |
+          wget -q https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/cuda-keyring_1.1-1_all.deb
+          sudo dpkg -i cuda-keyring_1.1-1_all.deb
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            cuda-nvcc-12-8 cuda-libraries-dev-12-8 cudnn9-cuda-12
+          sudo ln -sfn /usr/local/cuda-12.8 /usr/local/cuda
+
+      - name: Build and install
+        env:
+          CLEANUP: "no"
+          CUDA_ARCH_BIN: "8.7"
+        run: ./build_opencv.sh "${{ inputs.version }}"
+
+      - name: Check the install
+        run: |
+          python3 -c "import cv2; print(cv2.getBuildInformation())" | tee buildinfo.txt
+          grep -E "NVIDIA CUDA: +YES" buildinfo.txt
+          grep -E "cuDNN: +YES" buildinfo.txt
+          python3 -c "import cv2; assert hasattr(cv2, 'cuda_GpuMat') or hasattr(cv2.cuda, 'GpuMat')"
+
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs-cuda
+          path: /tmp/build_opencv/opencv/build/*.log
+          if-no-files-found: ignore
