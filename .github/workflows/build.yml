@@ -13,6 +13,10 @@ on:
     # monthly, to catch distro package changes
     - cron: "17 4 1 * *"
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   shellcheck:
     runs-on: ubuntu-latest
@@ -35,6 +39,11 @@ jobs:
         run: |
           sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL || true
           df -h /
+
+      # The runner images ship clang's libunwind-*-dev, which conflicts with
+      # libunwind-dev (needed by libgstreamer1.0-dev). Stock Ubuntu doesn't.
+      - name: Remove conflicting runner packages
+        run: sudo apt-get remove -y 'libunwind-*-dev' || true
 
       - name: Build, test and install
         env:

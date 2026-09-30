@@ -258,6 +258,15 @@ configure () {
         )
     fi
 
+    # KleidiCV (the ARM HAL enabled by default on aarch64 since 4.11) needs
+    # CMake 3.16, newer than Ubuntu 18.04 (JetPack 4) has.
+    local cmake_version
+    cmake_version=$(cmake --version | awk 'NR==1 {print $3}')
+    if [[ "$(printf '%s\n' 3.16 "${cmake_version}" | sort -V | head -n1)" != "3.16" ]] ; then
+        echo "CMake ${cmake_version} is older than 3.16, disabling KleidiCV."
+        CMAKEFLAGS+=(-D WITH_KLEIDICV=OFF)
+    fi
+
     if [[ "${WITH_CUDA}" == "ON" ]] ; then
         CMAKEFLAGS+=(
             -D WITH_CUDA=ON
