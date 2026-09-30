@@ -144,6 +144,12 @@ install_dependencies () {
         libgstreamer-plugins-base1.0-dev
         libgstreamer-plugins-good1.0-dev
         libgstreamer1.0-dev
+        # runtime plugins, OpenCV's GStreamer backend needs appsink/appsrc
+        gstreamer1.0-plugins-base
+        gstreamer1.0-plugins-good
+        gstreamer1.0-plugins-bad
+        gstreamer1.0-plugins-ugly
+        gstreamer1.0-libav
         libgtk-3-dev
         libjpeg-dev
         liblapack-dev
@@ -167,6 +173,9 @@ install_dependencies () {
         v4l-utils
         zlib1g-dev
     )
+    if [[ "$1" == "test" ]] ; then
+        wanted+=(xvfb)  # a virtual display for the highgui tests
+    fi
     local available=() entry pkg
     for entry in "${wanted[@]}" ; do
         for pkg in ${entry//|/ } ; do
@@ -346,7 +355,11 @@ run_tests () {
     # tests are known to be flaky or hardware dependent upstream, so failures
     # are reported but don't stop the install.
     export OPENCV_TEST_DATA_PATH="${BUILD_DIR}/opencv_extra/testdata"
-    if ctest --output-on-failure 2>&1 | tee -a test.log ; then
+    local runner=()
+    if [[ -z "${DISPLAY}" ]] && [[ -z "${WAYLAND_DISPLAY}" ]] && command -v xvfb-run > /dev/null ; then
+        runner=(xvfb-run -a)  # highgui tests need a display
+    fi
+    if "${runner[@]}" ctest --output-on-failure 2>&1 | tee -a test.log ; then
         echo "All tests passed."
     else
         echo "Some tests failed, see ${BUILD_DIR}/opencv/build/test.log"
@@ -370,7 +383,7 @@ main () {
 
     # prepare for the build:
     setup
-    install_dependencies
+    install_dependencies "${DO_TEST}"
     git_source "${VER}" "${DO_TEST}"
     find_cuda
     find_python
