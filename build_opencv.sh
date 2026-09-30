@@ -25,6 +25,8 @@
 #                is found and after installing (default: ask if interactive,
 #                otherwise no)
 # EXTRA_CMAKE_FLAGS  extra flags passed as-is to cmake
+# TEST_EXCLUDE   tests to skip when testing, as a gtest filter, eg.
+#                "Media.audio/*:videoio/videoio_bunny.frame_count/*" (default: none)
 
 set -eo pipefail
 
@@ -355,6 +357,16 @@ run_tests () {
     # tests are known to be flaky or hardware dependent upstream, so failures
     # are reported but don't stop the install.
     export OPENCV_TEST_DATA_PATH="${BUILD_DIR}/opencv_extra/testdata"
+    # Some test data (eg. face_landmark_model.dat) is downloaded into the build
+    # tree while configuring, but the tests only look for it in
+    # OPENCV_TEST_DATA_PATH or an installed copy, and we test before installing.
+    if [[ -d share/opencv4/testdata ]] ; then
+        cp -R share/opencv4/testdata/. "${OPENCV_TEST_DATA_PATH}/"
+    fi
+    if [[ -n "${TEST_EXCLUDE}" ]] ; then
+        echo "Excluding tests: ${TEST_EXCLUDE}"
+        export GTEST_FILTER="-${TEST_EXCLUDE}"
+    fi
     local runner=()
     if [[ -z "${DISPLAY}" ]] && [[ -z "${WAYLAND_DISPLAY}" ]] && command -v xvfb-run > /dev/null ; then
         runner=(xvfb-run -a)  # highgui tests need a display

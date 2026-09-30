@@ -32,7 +32,8 @@ versions have not been tested to build and may require script modifications.
 
 This also fetches the test data from
 [opencv_extra](https://github.com/opencv/opencv_extra) and runs the accuracy
-tests before installing. The script exits non-zero if any test fails.
+tests before installing (under Xvfb if there is no display). The script exits
+non-zero if any test fails; `TEST_EXCLUDE` can skip known upstream failures.
 
 ## Options
 
@@ -49,6 +50,7 @@ Set these as environment variables, e.g. `PREFIX=~/.local ./build_opencv.sh`.
 | `INSTALL_DEPS`      | `ON`                 | Install build dependencies with `apt-get`. |
 | `PYTHON3`           | `python3` on `PATH`  | Interpreter to build the bindings for. It needs numpy; use `/usr/bin/python3` if you have pyenv/conda first on your `PATH`. |
 | `CLEANUP`           | `ask`                | `yes`, `no` or `ask` whether to remove `BUILD_DIR` (when an old build exists, and after installing). Defaults to `no` when not run interactively. |
+| `TEST_EXCLUDE`      |                      | Tests to skip in test mode, as a gtest filter, e.g. `"Media.audio/*:Highgui_GUI.*"`. |
 | `EXTRA_CMAKE_FLAGS` |                      | Extra flags passed to cmake, e.g. `"-D WITH_QT=ON"`. |
 
 cuDNN (and the CUDA DNN backend) is enabled automatically when its headers are
